@@ -7,9 +7,9 @@ path = require 'path'
 http = require 'http'
 handlebars = require "handlebars"
 crypto = require 'crypto'
-#mailer = require('./mailer.js')
+mailer = require('./mailer.js')
 
-#jobs = require './jobs.js'
+jobs = require './jobs.js'
 
 
 
