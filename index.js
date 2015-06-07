@@ -18,9 +18,9 @@
 
   crypto = require('crypto');
 
-  mailer = require('./mailer.js');
+  //mailer = require('./mailer.js');
 
-  jobs = require('./jobs.js');
+  //jobs = require('./jobs.js');
 
   app.set('port', process.env.PORT);
 
@@ -745,7 +745,7 @@
     return hashValue;
   };
 
-  jobs.performJobs();
+  //jobs.performJobs();
 
 }).call(this);
 
