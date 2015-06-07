@@ -18,6 +18,13 @@
 
   crypto = require('crypto');
 
+<<<<<<< HEAD
+=======
+  //mailer = require('./mailer.js');
+
+  //jobs = require('./jobs.js');
+
+>>>>>>> origin/master
   app.set('port', process.env.PORT);
 
   app.set('tvdbApiKey', process.env.TVDB_API_KEY);
@@ -741,6 +748,11 @@
     return hashValue;
   };
 
+<<<<<<< HEAD
+=======
+  //jobs.performJobs();
+
+>>>>>>> origin/master
 }).call(this);
 
 
