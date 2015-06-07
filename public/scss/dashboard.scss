@@ -1,0 +1,256 @@
+* {
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+
+
+
+body {
+	width:100%;
+	height:100%;
+	background: #f2f2f2;
+	font-weight: 200;
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: 100;
+	}
+	a {
+		text-decoration: none;
+		color: rgba(0,0,0,.5);
+		:hover {
+			color: rgba(0,0,0,.5);
+			text-decoration: none;
+		}
+	}
+	div, li {
+		box-sizing: content-box;
+	}
+}
+
+
+
+
+
+nav#app-nav-bar {
+	height: 5em;
+	width: 100%;
+	background: rgba(255,255,255,0);
+	>div{
+		background: rgba(0,0,0,0.8);
+		color: rgba(0,0,0,.5);
+		height: 100%;
+		
+		>div {
+			display: inline-block;
+		}
+		#back-to-app-home {
+			width: 7%;
+			text-align: center;
+			a {
+				color: white;
+			}
+		}
+
+		#app-info {
+			width: 83%;
+			color: white;
+			>div {
+				display: inline-block;
+			}
+
+
+			#app-name {
+				padding-right: .5em;
+				vertical-align: center;
+				h1 {
+					font-weight: 100;
+				}
+			}
+			#viewing-series {
+				padding: 0em 1em;
+				
+			}
+			#series-name {
+				h1 {
+					font-weight: 100;
+				}
+			}
+			#app-for-windows {
+				padding: 0em 1em;
+
+			}
+
+		}
+		
+		#signin-to-app{
+			vertical-align: center;
+			button {
+				padding: 0;
+				margin: 0;
+			}
+		}
+	}
+	
+}
+
+
+.dashboard-content {
+	color: black;
+}
+
+
+
+#dashboard {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-flow: column nowrap;
+	>div {
+		//height: 100%;
+	}
+
+	#options-bar {
+		width: 50%;
+		margin: 2em 25%;
+
+		
+	}
+
+
+	#options-bar-content {
+	  color: rgba(0,0,0,.5);
+		width: auto;
+
+		.options-bar-option-content.not-active {
+			display: none;
+		}
+		>div {
+			width: 100%;
+		}
+
+		div[data-link="account"] {
+		  
+			
+
+		}
+
+	}
+
+
+}
+
+
+
+#subscriptions-option-content {
+  
+	display: flex;
+	flex-flow: row wrap;
+	align-tems: center;
+	align-content: center;
+	justify-content: center;
+
+	.subscribed-tv-show {
+		margin: 2em 0 0 2em;
+		height: 20em;
+		display: flex;
+		flex-flow: column nowrap;
+		position: relative;
+
+		.remove-series-indicator {
+			display: none;
+			position: absolute;
+			right: 10%;
+			top: 6%;
+			color: white;
+			font-size: 1.4em;
+		}
+		.remove-series-indicator.display {
+			display: block;
+		}
+
+		.series-artwork {
+			height: 90%;
+
+			img {
+				height: 100%;
+				
+				border: .1em solid transparent;
+				border-radius: .5em;
+				padding: .1em
+			}
+			img:hover {
+				border-color: #adadad;
+			}
+		}
+		.series-name {
+			height:9%;
+			text-align: center;
+			font-weight: normal;
+			border-bottom: .1em solid transparent;
+		}
+
+	}
+	.subscribed-tv-show:hover .series-name {
+		//border-color: #adadad
+	}
+}
+
+h4::before {
+	padding-right: 0;
+	margin-left: 0;
+	content: "";
+	color: #9ddcff;
+}
+
+.form-group {
+	width: 50%;
+	margin: 1em 25%;
+}
+
+#reset-password, #close-account {
+	width: 25%;
+	margin: 1em 37.5%;
+	a {
+		text-decoration: none;
+		color: rgba(0,0,0,.5);
+	}
+}
+
+#confirm-delete {
+	a {
+		color: white;
+		text-decoration:  none;
+	}
+}
+
+#unsubscribe-tv-shows {
+	width: 100%;
+	position: relative;
+	height: 1.5em;
+	button {
+		width: 7em;
+		position: absolute;
+		top: 0;
+		right: 2.7em; 
+	}
+	visibility: hidden;
+}
+
+#unsubscribe-tv-shows.visible {
+	visibility: visible;
+}
+
+#modal-tv-shows-to-be-unsubscribed {
+	font-weight: normal;
+	.modal-title {
+		font-weight: normal;
+	}
+	.series-name {
+		font-weight: 500;
+		margin-left: 2em;
+	}
+}
+
+
+

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="../includes/font-awesome/4.2.0/css/font-awesome.min.css">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="../includes/jquery/1.11.0/jquery.min.js"></script>
+    <!--
+    <script type="text/javascript" src="../includes/modernizr/83855/custom/modernizr.js"></script>
+    <script type="text/javascript" src="../includes/angular-js/1.3.9/angular.js"></script>
+    -->
+    <script type="text/javascript" src="../includes/angular-js/1.3.13/angular.min.js"></script>
+    <script type="text/javascript" src="../includes/angular-ui-utils/0.2.2/angular-ui-utils.min.js"></script>
+    
+    <script type="text/javascript" src="../includes/nicescroll/3.6.0/nicescroll.js"></script>
+
+
+   
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    
+    <link rel="stylesheet" href="../includes/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!--
+    <link rel="stylesheet" href="../includes/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    -->
+    <script type="text/javascript" src="../includes/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../css/sign-up.css">
+    <script type="text/javascript" src="../js/signup.js"></script>
+
+    
+
+
+    
+    <title>TV Series: Signup</title>
+  </head>
+
+  <body ng-app="signupapp" ng-controller="controller as signupAppController">
+
+    <nav id="app-nav-bar">
+      <div id="app-info">
+        <div id="app-name"><h1>TV Series</h1></div>
+        <div id="app-for-mac"><a href="http://mac.tvseries.cf"><i class="fa fa-apple fa-2x"></i></a></div>
+        <div id="app-for-windows"><a href="http://windows.tvseries.cf"><i class="fa fa-windows fa-2x"></i></a></div>
+      </div>
+    </nav>
+
+    <h3 id="page-title">Create your TV Series Account</h3>
+
+
+
+    <!-- Signup Form-->
+    <form class="form-horizontal" role="form" action="/signup" method="POST" id="signup-form" name="signupForm" novalidate>
+      
+      <div class="form-group">
+        <label for="firstName" class="col-sm-2 control-label">First Name</label>
+        <div class="col-sm-5">
+          <input type="text" class="form-control" id="inputFirstName" placeholder="First Name" name="firstName" required ng-model="formData.firstName" ng-pattern="/^[a-zA-Z]+$/" /> 
+        </div>
+        <div class="error-message col-sm-offset-3 col-sm-4">
+          <p ng-show="signupForm.firstName.$invalid && signupForm.firstName.$dirty" class="help-block">
+            Your name should contains only alphabets with a minimum length of 1
+          </p>
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <label for="lastName" class="col-sm-2 control-label">Last Name</label>
+        <div class="col-sm-5">
+          <input type="text" class="form-control" id="inputLastName" placeholder="Last Name" name="lastName" required ng-model="formData.lastName" ng-pattern="/^[a-zA-Z]+$/" />
+        </div>
+       <div class="error-message col-sm-offset-3 col-sm-4">
+          <p ng-show="signupForm.lastName.$invalid && signupForm.lastName.$dirty" class="help-block">
+            Your name should contains only alphabets with a minimum length of 1
+          </p>
+        </div>
+      </div>
+
+      
+
+      <div class="form-group">
+        <label for="email" class="col-sm-2 control-label">Email</label>
+        <div class="col-sm-5">
+          <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="email" required ng-model="formData.email">
+        </div>
+        <div class="error-message col-sm-offset-3 col-sm-4">
+          <p ng-show="signupForm.email.$invalid && signupForm.email.$dirty" class="help-block">
+            Valid email required
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username" class="col-sm-2 control-label">Username</label>
+        <div class="col-sm-5">
+          <input type="text" class="form-control" id="inputUsername" placeholder="Username" name="username" ng-model="formData.username"  ng-minlength="5" ng-maxlength="20" required>
+        </div>
+        <div class="error-message col-sm-offset-3 col-sm-4">
+          <p ng-show="signupForm.username.$invalid && signupForm.username.$dirty" class="help-block">
+            Valid username required
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username" class="col-sm-2 control-label">Time Zone</label>
+        <div class="col-sm-5">
+          <select id="time-zone" class="form-control" name="timeZone" ng-model="formData.timeZone">
+            <option value="-11" >Midway GMT -11:00</option>
+            <option value="-10" >Honolulu GMT -10:00</option>
+            <option value="-9"  >Anchorage GMT -09:00</option>
+            <option value="-8"  >Los Angeles, Tijuana GMT -08:00</option>
+            <option value="-7"  >Phoenix, Chihuahua, Denver GMT -07:00</option>
+            <option value="-6"  >Costa Rica, Chicago, Regina GMT -06:00</option>
+            <option value="-5"  >Bogota, New York GMT -05:00</option>
+            <option value="-4.5">Caracas GMT -04:30</option>
+            <option value="-4"  >Barbados, Halifax, Manaus, Santiago GMT -04:00</option>
+            <option value="-3.5">St. John GMT -03:30</option>
+            <option value="-3"  >Buenos Aires, Nuuk, Montivideo GMT -03:00</option>
+            <option value="-2"  >Soth Georgia GMT -02:00</option>
+            <option value="-1"  >Azores, Cape Verde  GMT -01:00</option>
+            <option value="0"   >Casablance, London GMT +00:00</option>
+            <option value="1"   >Amsterdam, Belgrade, Brussels, Sarajevo, Windhoek, Brazzaville GMT +01:00</option>
+            <option value="2"   >Amman, Athens, Beirut, Cairo, Helsinki, Jerusalem, Harare GMT +02:00</option>
+            <option value="3"   >Minsk, Baghdad, Kuwait, Nairobi GMT +03:00</option>
+            <option value="3.5" >Tehran GMT +03:30</option>
+            <option value="4"   >Baku, Tbilisi, Yerevan, Dubai GMT +04:00</option>
+            <option value="4.5" >Kabul GMT +04:30</option>
+            <option value="5"   >Karachi, Oral, Yekaterinburg GMT +05:00</option>
+            <option value="5.5" >Kolkata, Colombo GMT +05:30</option>
+            <option value="5.75">Kathmandu GMT +05:45</option>
+            <option value="6"   >Almaty GMT +06:00</option>
+            <option value="6.5" >Rangoon GMT +06:30</option>
+            <option value="7"   >Krasnoyarsk, Bankok, Jakarta GMT +07:00</option>
+            <option value="8"   >Shangai, Hong Kong, Irkutsk, Kuala Lumpur, Perth, Taipei GMT +08:00</option>
+            <option value="9"   >Seoul, Tokyo, Yakutsk GMT +09:00 </option>
+            <option value="9.5" >Adelaide, Darwin GMT +09:30</option>
+            <option value="10" >Brisbane, Hobart, Sydney, Vladivostok, Guam, Magadan GMT +10:00</option>
+            <option value="12" >Auckland, Fiji GMT +12:00</option>
+            <option value="13" >Tongatapu GMT +13:00</option>
+          </select>
+        </div>
+      </div>
+
+
+       
+
+      <div class="form-group">
+        <label for="password" class="col-sm-2 control-label">Create a Password</label>
+        <div class="col-sm-5">
+          <input type="password" class="form-control" id="inputPassword" placeholder="Password" name="password" ng-model="formData.password" required ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(_|[^\w])).+$/" ng-minlength="8">
+        </div>
+        <div class="error-message col-sm-offset-3 col-sm-4">
+          <p ng-show="signupForm.password.$invalid && signupForm.password.$dirty" class="help-block">
+            Your password should contain atleast 1 lowercase character, 1 uppercase character, 1 number and a special charcter with a minimum length of 8
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm-password" class="col-sm-2 control-label">Confirm your Password</label>
+        <div class="col-sm-5">
+          <input type="password" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password" name="confirmPassword" ng-model="formData.confirmPassword" required ui-validate=" '$value==formData.password' " ui-validate-watch=" 'formData.password' ">
+        </div>
+        <div class="error-message col-sm-offset-3 col-sm-4">
+          <p ng-show="signupForm.confirmPassword.$invalid && signupForm.confirmPassword.$dirty" class="help-block">
+            Passwords do not match
+          </p>
+        </div>
+      </div>
+      <!--
+      <input type="hidden" name="redirect" value="{{redirect}}">
+      -->
+      <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-5">
+          <button type="submit" class="btn btn-default" ng-disabled="!signupForm.$valid">Sign up</button>
+        </div>
+        <div class="error-message col-sm-offset-2 col-sm-5">
+          <p ng-show="signupForm.$invalid && signupForm.$dirty" class="help-block">
+            Some of the fields are missing
+          </p>
+        </div>
+      </div>
+    </form>
+    
+
+    <script>
+      //runScript()
+    </script>
+  </body>
+</html>

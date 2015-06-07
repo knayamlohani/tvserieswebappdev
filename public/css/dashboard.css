@@ -1,0 +1,174 @@
+* {
+  padding: 0;
+  margin: 0;
+  border: 0; }
+
+body {
+  width: 100%;
+  height: 100%;
+  background: #f2f2f2;
+  font-weight: 200; }
+  body h1, body h2, body h3, body h4, body h5, body h6 {
+    font-weight: 100; }
+  body a {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.5); }
+    body a :hover {
+      color: rgba(0, 0, 0, 0.5);
+      text-decoration: none; }
+  body div, body li {
+    -moz-box-sizing: content-box;
+         box-sizing: content-box; }
+
+nav#app-nav-bar {
+  height: 5em;
+  width: 100%;
+  background: rgba(255, 255, 255, 0); }
+  nav#app-nav-bar > div {
+    background: rgba(0, 0, 0, 0.8);
+    color: rgba(0, 0, 0, 0.5);
+    height: 100%; }
+    nav#app-nav-bar > div > div {
+      display: inline-block; }
+    nav#app-nav-bar > div #back-to-app-home {
+      width: 7%;
+      text-align: center; }
+      nav#app-nav-bar > div #back-to-app-home a {
+        color: white; }
+    nav#app-nav-bar > div #app-info {
+      width: 83%;
+      color: white; }
+      nav#app-nav-bar > div #app-info > div {
+        display: inline-block; }
+      nav#app-nav-bar > div #app-info #app-name {
+        padding-right: .5em;
+        vertical-align: center; }
+        nav#app-nav-bar > div #app-info #app-name h1 {
+          font-weight: 100; }
+      nav#app-nav-bar > div #app-info #viewing-series {
+        padding: 0em 1em; }
+      nav#app-nav-bar > div #app-info #series-name h1 {
+        font-weight: 100; }
+      nav#app-nav-bar > div #app-info #app-for-windows {
+        padding: 0em 1em; }
+    nav#app-nav-bar > div #signin-to-app {
+      vertical-align: center; }
+      nav#app-nav-bar > div #signin-to-app button {
+        padding: 0;
+        margin: 0; }
+
+.dashboard-content {
+  color: black; }
+
+#dashboard {
+  height: 100%;
+  width: 100%;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: column nowrap;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap; }
+  #dashboard #options-bar {
+    width: 50%;
+    margin: 2em 25%; }
+  #dashboard #options-bar-content {
+    color: rgba(0, 0, 0, 0.5);
+    width: auto; }
+    #dashboard #options-bar-content .options-bar-option-content.not-active {
+      display: none; }
+    #dashboard #options-bar-content > div {
+      width: 100%; }
+
+#subscriptions-option-content {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap;
+  align-tems: center;
+  -webkit-align-content: center;
+      -ms-flex-line-pack: center;
+          align-content: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
+  #subscriptions-option-content .subscribed-tv-show {
+    margin: 2em 0 0 2em;
+    height: 20em;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-flow: column nowrap;
+        -ms-flex-flow: column nowrap;
+            flex-flow: column nowrap;
+    position: relative; }
+    #subscriptions-option-content .subscribed-tv-show .remove-series-indicator {
+      display: none;
+      position: absolute;
+      right: 10%;
+      top: 6%;
+      color: white;
+      font-size: 1.4em; }
+    #subscriptions-option-content .subscribed-tv-show .remove-series-indicator.display {
+      display: block; }
+    #subscriptions-option-content .subscribed-tv-show .series-artwork {
+      height: 90%; }
+      #subscriptions-option-content .subscribed-tv-show .series-artwork img {
+        height: 100%;
+        border: .1em solid transparent;
+        border-radius: .5em;
+        padding: 0.1em; }
+      #subscriptions-option-content .subscribed-tv-show .series-artwork img:hover {
+        border-color: #adadad; }
+    #subscriptions-option-content .subscribed-tv-show .series-name {
+      height: 9%;
+      text-align: center;
+      font-weight: normal;
+      border-bottom: .1em solid transparent; }
+
+h4::before {
+  padding-right: 0;
+  margin-left: 0;
+  content: "";
+  color: #9ddcff; }
+
+.form-group {
+  width: 50%;
+  margin: 1em 25%; }
+
+#reset-password, #close-account {
+  width: 25%;
+  margin: 1em 37.5%; }
+  #reset-password a, #close-account a {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.5); }
+
+#confirm-delete a {
+  color: white;
+  text-decoration: none; }
+
+#unsubscribe-tv-shows {
+  width: 100%;
+  position: relative;
+  height: 1.5em;
+  visibility: hidden; }
+  #unsubscribe-tv-shows button {
+    width: 7em;
+    position: absolute;
+    top: 0;
+    right: 2.7em; }
+
+#unsubscribe-tv-shows.visible {
+  visibility: visible; }
+
+#modal-tv-shows-to-be-unsubscribed {
+  font-weight: normal; }
+  #modal-tv-shows-to-be-unsubscribed .modal-title {
+    font-weight: normal; }
+  #modal-tv-shows-to-be-unsubscribed .series-name {
+    font-weight: 500;
+    margin-left: 2em; }
+
+/*# sourceMappingURL=dashboard.css.map */
