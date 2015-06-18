@@ -60,4 +60,14 @@ nav#app-nav-bar {
     padding: 0;
     color: #FA787E; }
 
+#check-username-availability {
+  padding: .7em 2em; }
+  #check-username-availability .progress {
+    font-size: 1.3em; }
+  #check-username-availability .fa-search {
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 1.4em; }
+  #check-username-availability .hidden {
+    display: none; }
+
 /*# sourceMappingURL=sign-up.css.map */

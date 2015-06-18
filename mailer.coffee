@@ -4,10 +4,17 @@ emailTemplates = require 'email-templates'
 nodemailer     = require 'nodemailer'
 crypto         = require 'crypto'
 mongodbclient  = require './mongodbclient.js'
- 
+
+emailAccount = 
+  "username": null
+  "password": null
+
+exports.setEmailAccount = (account) ->
+  emailAccount.username = account.username
+  emailAccount.password = account.password
+  return
 
 exports.mailSubscriptions = (subscribers, callback) -> 
-  #console.log "exports.mailSubscriptions"
 
   emailTemplates templatesDir, (err, template) ->
     console.log "email templates"
@@ -19,8 +26,8 @@ exports.mailSubscriptions = (subscribers, callback) ->
       transportBatch = nodemailer.createTransport("SMTP", {
         service: "Gmail",
         auth: {
-          user: "tvserieswebapp@gmail.com",
-          pass: ""
+          user: emailAccount.username,
+          pass: emailAccount.password
         },
         debug: true
       });
@@ -119,8 +126,8 @@ generateHashFromTokenAndMailResetLink = (email, token) ->
   transporter = nodemailer.createTransport 'SMTP',
     service: 'Gmail',
     auth:
-      user: 'tvserieswebapp@gmail.com',
-      pass: 'sb6-ra4-rLV-NDf'
+      user: emailAccount.username,
+      pass: emailAccount.password
 
  
   # setup e-mail data with unicode symbols 
@@ -150,8 +157,8 @@ exports.sendMail = (mailOptions, callback) ->
   transporter = nodemailer.createTransport 'SMTP',
     service: 'Gmail',
     auth:
-      user: 'tvserieswebapp@gmail.com',
-      pass: ''
+      user: emailAccount.username,
+      pass: emailAccount.password
 
   
   # send mail with defined transport object 

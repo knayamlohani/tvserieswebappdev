@@ -13,13 +13,22 @@ jobs = require './jobs.js'
 
 
 
+
+
 #app config
 app.set 'port', (process.env.PORT)
 app.set 'tvdbApiKey', (process.env.TVDB_API_KEY)
+app.set 'emailusername', (process.env.emailusername)
+app.set 'emailpassword', (process.env.emailpassword)
 
 
 #tvdbwebservice config
 tvdbWebService.setTvdbApiKey app.get 'tvdbApiKey'
+
+#mailer config
+mailer.setEmailAccount
+  "username": app.get 'emailusername'
+  "password": app.get 'emailpassword'
 
 
 # mongo db config
@@ -196,6 +205,10 @@ app.get '/', (req, res)  ->
   return
 
 
+app.get '/search', (req, res) ->
+  res.redirect '/'
+  return
+
 #request for signup
 app.get '/signup', (req, res) ->
   console.log "signup"
@@ -204,12 +217,17 @@ app.get '/signup', (req, res) ->
 
   res.writeHead 200, {"Context-Type": "text/html"}
   signupObject = 
-    "errorMessage" : ""
-    "redirect"     : ""
+    "error"    : null
+    "redirect" : null
+
+  if req.session.errorDataOnSignup
+    signupObject.error = req.session.errorDataOnSignup
 
   if !signupTemplate
     signupHTML = fs.readFileSync "public/signup.html", "utf8"
     signupTemplate = handlebars.compile signupHTML
+
+  req.session.errorDataOnSignup = null
   
   result = signupTemplate signupObject
   res.write result
@@ -228,13 +246,20 @@ app.post '/signup', (req, res)  ->
   req.session.email    = ""
   req.session["signinStatus"] = false
 
+  req.session.errorDataOnSignup =
+    "firstName" : req.body["firstName"]
+    "lastName"  : req.body["lastName"]
+    "username"  : req.body["username"]
+    "email"     : req.body["email"]
+    "timeZone"  : req.body["timeZone"] 
+
   mongodbclient.checkIfEmailAlreadyRegistered req.body.email, (mailStausResult) ->
     console.log "found status", mailStausResult
     if !mailStausResult.status
       shasum = crypto.createHash 'sha1';
       shasum.update req.body["password"]
       password = shasum.digest 'hex'
-
+      req.session.errorDataOnSignup = null
       mongodbclient.addNewUser
         "firstName"            : req.body["firstName"]
         "lastName"             : req.body["lastName"]
@@ -260,16 +285,40 @@ app.post '/signup', (req, res)  ->
         res.redirect '/signin'
         return
     else
-      res.redirect '/account/signup.html' 
+      req.session.emailAlreadyRegisteredWhileSignup = true;
+      res.redirect '/signup' 
     return
   return
 
+app.post '/checkUsernameAvailability', (req, res) ->
+  console.log "checking usernameavailibilty",req.body
+  
+  mongodbclient.checkUsernameAvailability 
+    "object" : 
+      "username" : req.body.username
+  , 
+  (result) ->
+    console.log "result", result
+    if !result.err
+      if result.data.length == 0
+        result.data = 1
+        result.status = true
+      else 
+        result.data = 0
+        result.status = false
+    res.end JSON.stringify result, null, 4
+    return
+  
+  return
 
 
 
 #handle requests for series page
 app.get '/series', (req, res)  ->
   console.log 'requesting series', req.query
+  if !req.query.name or !req.query.id
+    res.redirect '/seriesNotFound'
+
   if !seriesHTML
     indexHTML = fs.readFileSync "public/series.html", "utf8"
   
@@ -316,8 +365,6 @@ app.get '/series', (req, res)  ->
   return
 
 
-
-
 app.get '/deleteAccount', (req, res) ->
   if req.session.username
     username = req.session.username
@@ -333,22 +380,51 @@ app.get '/deleteAccount', (req, res) ->
 
 app.get '/authenticateAccount', (req, res) ->
   token = req.query.token
-  reportsPageData = 
-    "message" : "Please wait while authenticating your TV Series Account"
   
+  mongodbclient.authenticateAccount token, (result) ->
+    console.log "account authenticatec status", result
+    
+    if !result.err && result.data == 1
+      reportsPageData = 
+        "title"        : "Authenticate account"
+        "mainMessage"  : "Your TV Series account was successfully authenticated"
+        "otherMessage" : "Redirecticting to signin in 5 seconds ..."
+    else
+      reportsPageData = 
+        "title"       : "Authenticate account"
+        "mainMessage" : "Unable to process the request"
+    
+    if !reportsHTML
+      reportsHTML = fs.readFileSync "public/reports.html", "utf8"
+    
+    template = handlebars.compile reportsHTML
+    result = template reportsPageData
+
+    res.writeHead 200, {"Context-Type": "text/html"}
+    res.write result 
+    res.end()
+    return
+
+app.get '/reports', (req, res) ->
+  reportsPageData = 
+    "mainMessage"  : "Your TV Series account was successfully authenticated"
+    "otherMessage" : "Redirecticting to signin in 5 seconds ..."
+
   if !reportsHTML
     reportsHTML = fs.readFileSync "public/reports.html", "utf8"
   
   template = handlebars.compile reportsHTML
   result = template reportsPageData
 
-  res.writeHead 200, {"Context-Type": "text/html"}
+  #res.writeHead 200, {"Context-Type": "text/html"}
+  #res.writeHead 301, {Location: '/'}
+  #res.writeHead 302, {"Refresh", "10; URL='/'"}
+  
+  
+  console.log "res headers", res
+
+
   res.write result 
-
-  mongodbclient.authenticateAccount token, (result) ->
-    console.log "account authenticatec status", result
-    return
-
   res.end()
 
   return   
@@ -476,17 +552,23 @@ app.get '/signout', (req, res) ->
 
 
 app.get '/signin', (req, res) ->
-
-  console.log "status code", req
+  if req.session.signinStatus
+    res.redirect '/'
 
   console.log "redirect", req.query.redirect
 
-  redirect = "#{req.query.redirect}?name=#{req.query.name}&id=#{req.query.id}&bannerUrl=#{req.query.bannerUrl}&altBannerUrl=#{req.query.altBannerUrl}"
+  if req.query.redirect
+    if req.query.id
+      redirect = "#{req.query.redirect}?name=#{req.query.name}&id=#{req.query.id}&bannerUrl=#{req.query.bannerUrl}&altBannerUrl=#{req.query.altBannerUrl}"
+    else
+      redirect = "#{req.query.redirect}"
+  else 
+      redirect = "/"
 
   res.writeHead 200, {"Context-Type": "text/html"}
   signinObject = 
     "email"        : ""
-    "errorMessage" : ""
+    "errorMessage" : null
     "redirect"     : redirect
 
   if !signinTemplate
@@ -495,10 +577,7 @@ app.get '/signin', (req, res) ->
   
   result = signinTemplate signinObject
   res.write result
-
-
   res.end()
-  
   return
 
 
@@ -506,28 +585,11 @@ app.get '/signin', (req, res) ->
 
 
 app.post '/signin', (req, res) ->
-  ###
-  res.writeHead 200, {"Context-Type": "text/html"}
-  reportsObject = 
-    "message" : "Signing in"
-  
-  if !reportsTemplate
-    reportsHTML = fs.readFileSync "public/reports.html", "utf8"
-    reportsTemplate = handlebars.compile reportsHTML
-  
-  result = reportsTemplate reportsObject
-  res.write result
-  res.end()
-  ###
-  
-
   shasum = crypto.createHash 'sha1'
   shasum.update req.body["password"]
   password = shasum.digest 'hex'
 
   redirect = req.body.redirect
-  
-
   mongodbclient.authenticateUserCredentials req.body.email, password, (result) ->
 
     console.log result
@@ -557,8 +619,6 @@ app.post '/signin', (req, res) ->
         signinObject.errorMessage = ""
       else
         signinObject.authenticationStatus = "" 
-        
-        
 
       console.log "signinTemplate", signinObject
       
@@ -611,7 +671,6 @@ app.get '/subscriptions', (req, res) ->
 
 app.get '/subscribe', (req, res) ->  
   if !req.session["signinStatus"]
-    #res.redirect 401, '/signin?redirect=/series'
     res.end JSON.stringify
       "err": 
         "code": "401"
@@ -635,7 +694,6 @@ app.get '/subscribe', (req, res) ->
 
 app.post '/unsubscribe', (req, res) ->
   if !req.session["signinStatus"]
-    #res.redirect '/signin?redirect=/series'
     res.end JSON.stringify
       "err": 
         "code": "401"
@@ -643,19 +701,14 @@ app.post '/unsubscribe', (req, res) ->
       "status": false
       "data": null
   else
-    
     tvShowsToBeUnsubscribed = req.body.tvShowsToBeUnsubscribed
-
-    
     for tvShow in tvShowsToBeUnsubscribed
       tvShow["subscribersUsername"] = req.session.username
-    
 
     console.log "tv series object to be unsubscribed -\n", tvShowsToBeUnsubscribed
     mongodbclient.removeSeriesFromSubscribedTvShows {"object":tvShowsToBeUnsubscribed}, (result) ->
       console.log result
       res.end JSON.stringify result, null, 4
-    
   return
 
 
@@ -670,14 +723,6 @@ app.get '/subscriptions/getSeries',  (req, res) ->
       "status" : false
       "data"   : ""
   return
-
-
-
-  
-
-
-
-
 
 
 # server = app.listen app.get('port'), ->
@@ -704,8 +749,35 @@ server = http.createServer(app).listen app.get('port'), ->
   ##
   return
 
+
+
+###
+  to be used if none of route matches
+###
 app.use express.static __dirname + '/public'
 
+
+
+###
+  last route the 404
+###
+app.get '/*', (req, res) ->
+  reportsPageData = 
+    "title"        : "Page not found"
+    "mainMessage"  : "The page you’re looking for can’t be found"
+    "otherMessage" : "Try one of the links below"
+
+  if !reportsHTML
+    reportsHTML = fs.readFileSync "public/reports.html", "utf8"
+  
+  template = handlebars.compile reportsHTML
+  result = template reportsPageData
+
+  res.status 404
+  res.write result 
+  res.end()
+
+  return  
 
 ###
 (() ->

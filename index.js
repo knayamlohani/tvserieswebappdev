@@ -26,7 +26,16 @@
 
   app.set('tvdbApiKey', process.env.TVDB_API_KEY);
 
+  app.set('emailusername', process.env.emailusername);
+
+  app.set('emailpassword', process.env.emailpassword);
+
   tvdbWebService.setTvdbApiKey(app.get('tvdbApiKey'));
+
+  mailer.setEmailAccount({
+    "username": app.get('emailusername'),
+    "password": app.get('emailpassword')
+  });
 
   mongodbclient = require('./mongodbclient.js');
 
@@ -189,6 +198,10 @@
     res.end();
   });
 
+  app.get('/search', function(req, res) {
+    res.redirect('/');
+  });
+
   app.get('/signup', function(req, res) {
     var result, signupObject;
     console.log("signup");
@@ -196,13 +209,17 @@
       "Context-Type": "text/html"
     });
     signupObject = {
-      "errorMessage": "",
-      "redirect": ""
+      "error": null,
+      "redirect": null
     };
+    if (req.session.errorDataOnSignup) {
+      signupObject.error = req.session.errorDataOnSignup;
+    }
     if (!signupTemplate) {
       signupHTML = fs.readFileSync("public/signup.html", "utf8");
       signupTemplate = handlebars.compile(signupHTML);
     }
+    req.session.errorDataOnSignup = null;
     result = signupTemplate(signupObject);
     res.write(result);
     res.end();
@@ -214,6 +231,13 @@
     req.session.username = "";
     req.session.email = "";
     req.session["signinStatus"] = false;
+    req.session.errorDataOnSignup = {
+      "firstName": req.body["firstName"],
+      "lastName": req.body["lastName"],
+      "username": req.body["username"],
+      "email": req.body["email"],
+      "timeZone": req.body["timeZone"]
+    };
     mongodbclient.checkIfEmailAlreadyRegistered(req.body.email, function(mailStausResult) {
       var password, shasum;
       console.log("found status", mailStausResult);
@@ -221,6 +245,7 @@
         shasum = crypto.createHash('sha1');
         shasum.update(req.body["password"]);
         password = shasum.digest('hex');
+        req.session.errorDataOnSignup = null;
         mongodbclient.addNewUser({
           "firstName": req.body["firstName"],
           "lastName": req.body["lastName"],
@@ -244,14 +269,39 @@
           res.redirect('/signin');
         });
       } else {
-        res.redirect('/account/signup.html');
+        req.session.emailAlreadyRegisteredWhileSignup = true;
+        res.redirect('/signup');
       }
+    });
+  });
+
+  app.post('/checkUsernameAvailability', function(req, res) {
+    console.log("checking usernameavailibilty", req.body);
+    mongodbclient.checkUsernameAvailability({
+      "object": {
+        "username": req.body.username
+      }
+    }, function(result) {
+      console.log("result", result);
+      if (!result.err) {
+        if (result.data.length === 0) {
+          result.data = 1;
+          result.status = true;
+        } else {
+          result.data = 0;
+          result.status = false;
+        }
+      }
+      res.end(JSON.stringify(result, null, 4));
     });
   });
 
   app.get('/series', function(req, res) {
     var result, seriesPageData, template;
     console.log('requesting series', req.query);
+    if (!req.query.name || !req.query.id) {
+      res.redirect('/seriesNotFound');
+    }
     if (!seriesHTML) {
       indexHTML = fs.readFileSync("public/series.html", "utf8");
     }
@@ -314,23 +364,49 @@
   });
 
   app.get('/authenticateAccount', function(req, res) {
-    var reportsPageData, result, template, token;
+    var token;
     token = req.query.token;
+    return mongodbclient.authenticateAccount(token, function(result) {
+      var reportsPageData, template;
+      console.log("account authenticatec status", result);
+      if (!result.err && result.data === 1) {
+        reportsPageData = {
+          "title": "Authenticate account",
+          "mainMessage": "Your TV Series account was successfully authenticated",
+          "otherMessage": "Redirecticting to signin in 5 seconds ..."
+        };
+      } else {
+        reportsPageData = {
+          "title": "Authenticate account",
+          "mainMessage": "Unable to process the request"
+        };
+      }
+      if (!reportsHTML) {
+        reportsHTML = fs.readFileSync("public/reports.html", "utf8");
+      }
+      template = handlebars.compile(reportsHTML);
+      result = template(reportsPageData);
+      res.writeHead(200, {
+        "Context-Type": "text/html"
+      });
+      res.write(result);
+      res.end();
+    });
+  });
+
+  app.get('/reports', function(req, res) {
+    var reportsPageData, result, template;
     reportsPageData = {
-      "message": "Please wait while authenticating your TV Series Account"
+      "mainMessage": "Your TV Series account was successfully authenticated",
+      "otherMessage": "Redirecticting to signin in 5 seconds ..."
     };
     if (!reportsHTML) {
       reportsHTML = fs.readFileSync("public/reports.html", "utf8");
     }
     template = handlebars.compile(reportsHTML);
     result = template(reportsPageData);
-    res.writeHead(200, {
-      "Context-Type": "text/html"
-    });
+    console.log("res headers", res);
     res.write(result);
-    mongodbclient.authenticateAccount(token, function(result) {
-      console.log("account authenticatec status", result);
-    });
     res.end();
   });
 
@@ -447,15 +523,25 @@
 
   app.get('/signin', function(req, res) {
     var redirect, result, signinObject;
-    console.log("status code", req);
+    if (req.session.signinStatus) {
+      res.redirect('/');
+    }
     console.log("redirect", req.query.redirect);
-    redirect = "" + req.query.redirect + "?name=" + req.query.name + "&id=" + req.query.id + "&bannerUrl=" + req.query.bannerUrl + "&altBannerUrl=" + req.query.altBannerUrl;
+    if (req.query.redirect) {
+      if (req.query.id) {
+        redirect = "" + req.query.redirect + "?name=" + req.query.name + "&id=" + req.query.id + "&bannerUrl=" + req.query.bannerUrl + "&altBannerUrl=" + req.query.altBannerUrl;
+      } else {
+        redirect = "" + req.query.redirect;
+      }
+    } else {
+      redirect = "/";
+    }
     res.writeHead(200, {
       "Context-Type": "text/html"
     });
     signinObject = {
       "email": "",
-      "errorMessage": "",
+      "errorMessage": null,
       "redirect": redirect
     };
     if (!signinTemplate) {
@@ -468,20 +554,6 @@
   });
 
   app.post('/signin', function(req, res) {
-
-    /*
-    res.writeHead 200, {"Context-Type": "text/html"}
-    reportsObject = 
-      "message" : "Signing in"
-    
-    if !reportsTemplate
-      reportsHTML = fs.readFileSync "public/reports.html", "utf8"
-      reportsTemplate = handlebars.compile reportsHTML
-    
-    result = reportsTemplate reportsObject
-    res.write result
-    res.end()
-     */
     var password, redirect, shasum;
     shasum = crypto.createHash('sha1');
     shasum.update(req.body["password"]);
@@ -681,7 +753,34 @@
     }
   });
 
+
+  /*
+    to be used if none of route matches
+   */
+
   app.use(express["static"](__dirname + '/public'));
+
+
+  /*
+    last route the 404
+   */
+
+  app.get('/*', function(req, res) {
+    var reportsPageData, result, template;
+    reportsPageData = {
+      "title": "Page not found",
+      "mainMessage": "The page you’re looking for can’t be found",
+      "otherMessage": "Try one of the links below"
+    };
+    if (!reportsHTML) {
+      reportsHTML = fs.readFileSync("public/reports.html", "utf8");
+    }
+    template = handlebars.compile(reportsHTML);
+    result = template(reportsPageData);
+    res.status(404);
+    res.write(result);
+    res.end();
+  });
 
 
   /*

@@ -69,13 +69,13 @@ exports.addNewUser = (requestingUser, callback) ->
           "data"   :
             "firstName"     : ""
             "lastName"      : ""
-            "username"       : ""
-            "email"          : ""
+            "username"      : ""
+            "email"         : ""
             "signinStatus"  : false
             "siginPage"     : "/signin"
             "dashboardPage" : ""
-            "status"         : "Sign in"
-            "toggle"         : ""
+            "status"        : "Sign in"
+            "toggle"        : ""
       else 
         _db = db
         addingNewUser requestingUser, db, callback
@@ -808,67 +808,15 @@ exports.addEntryToJobsCreatedStatusCollection = (options, callback) ->
   return
 
 
-exports.deleteDocumentFromCollection = (options, callback) ->
-  result = 
-    "err"    : ""
-    "status" : ""
-    "data"   : ""
-  
-  collection = options.db.collection options.collection
-  
-  collection.remove options.object, (err, results) ->
-    if err
-      result.status = false
-    else result.status = true
-    result.err = err
-    result.data = results
-    console.log result
-    callback result
-    return
-  return
 
 
 
-exports.addDocumentToCollection = (options, callback) ->
-  result = 
-    "err"    : ""
-    "status" : ""
-    "data"   : ""
-  
-  collection = options.db.collection options.collection
-  collection.insert options.object, (err, docs) ->
 
-    if err
-      result.status = false
-    else
-      result.status = true
-    
-    result.err  = err
-    result.data = docs
-    callback result
-    return
-  return
 
-exports.searchDocumentInCollection = (options, callback) ->
-  result = 
-    "err"    : ""
-    "status" : ""
-    "data"   : ""
-  
-  collection = options.db.collection options.collection
-  
-  collection.find(options.object).toArray (err, results) ->
-    if err
-      result.status = false
-    else 
-      result.status = true
-    
-    result.err = err
-    result.data = results
-    console.log result
-    callback result
-    return
-  return
+
+
+
+###
 
 exports.updateDocumentInCollection = (options, callback) ->
 
@@ -894,7 +842,7 @@ exports.updateDocumentInCollection = (options, callback) ->
   options, callback   
 
   return
-
+###
 
 createMongodbConnectionAndPerform = (job, options, callback) ->
   if _db
@@ -913,21 +861,132 @@ createMongodbConnectionAndPerform = (job, options, callback) ->
       return
   return
 
+
+###
+  connects to mongodb and perform the required operation passed as job and on completion of the job calls the callback
+###
+connectToMongodbAndPerform = (job, options, callback) ->
+  if _db
+    options.collection = _db.collection options.collection
+    job options, callback
+  else
+    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+      if err
+        callback
+          "err"    : err
+          "status" : false
+          "data"   : ""
+      else 
+        _db = db
+        options.collection = _db.collection options.collection
+        job options, callback
+
+      return
+  return
+
+
+
+
+###
+search for a document in collection
+###
+searchDocumentInCollection = (options, callback) ->
+  result = 
+    "err"    : ""
+    "status" : ""
+    "data"   : ""
+  
+
+  console.log "search ", options.object
+  collection = options.collection
+
+  
+  
+  collection.find(options.object).toArray (err, results) ->
+    if err
+      result.status = false
+    else 
+      result.status = true
+    
+    result.err = err
+    result.data = results
+    console.log result
+    callback result
+    return
+  return
+exports.searchDocumentInCollection = searchDocumentInCollection
+
+
+
+
+###
+delete document from a  collection
+###
+deleteDocumentFromCollection = (options, callback) ->
+  result = 
+    "err"    : ""
+    "status" : ""
+    "data"   : ""
+  
+  collection = options.collection
+  
+  collection.remove options.object, (err, results) ->
+    if err
+      result.status = false
+    else result.status = true
+    result.err = err
+    result.data = results
+    console.log result
+    callback result
+    return
+  return
+exports.deleteDocumentFromCollection = deleteDocumentFromCollection
+
+
+
+
+### 
+  checks for availability of username
+###
+exports.checkUsernameAvailability = (options, callback) ->
+  options.collection = 'useraccountdetails'
+  connectToMongodbAndPerform searchDocumentInCollection, options, callback
+  return
+
+
+
+
+
+###
+  removes tv shows from subscribed list for a given user
+###
+
 exports.removeSeriesFromSubscribedTvShows = (options, callback) ->
-  options.collection = "usersubscribedtvshows"
-  createMongodbConnectionAndPerform (options, db, callback) ->
-    result = 
-      "err"    : ""
-      "status" : ""
-      "data"   : ""
+  options.collection = 'usersubscribedtvshows'
+  connectToMongodbAndPerform removingSeriesFromSubscribedTvShows, options, callback
+  return
 
-    collection = db.collection options.collection
+removingSeriesFromSubscribedTvShows = (options, callback) ->
+  result = 
+    "err"    : ""
+    "status" : ""
+    "data"   : ""
 
+  collection = options.collection
+
+  (() ->
     tvShowsToBeUnsubscribed = options.object
+    counter = 0
+    tvShowsUnsubscribedCount = 0
+    limit = tvShowsToBeUnsubscribed.length
+    
     for tvShow in tvShowsToBeUnsubscribed
       console.log "series", tvShow
       
-      collection.remove tvShow, (err, docs) -> 
+
+
+      collection.remove {subscribersUsername:"#{tvShow.subscribersUsername}", id: "#{tvShow.id}"}, (err, docs) -> 
+        counter++
         if err
           result.status = false
         else 
@@ -935,13 +994,104 @@ exports.removeSeriesFromSubscribedTvShows = (options, callback) ->
         
         result.err  = err
         result.data = docs
-        callback result
+
+        if docs.data == 1
+          tvShowsUnsubscribedCount++
+
+        if counter == limit
+          if counter == tvShowsUnsubscribedCount
+            result.err = 
+              "msg" : "some tv shows were not unsubscribed"
+
+          callback result
         return
-      
-  ,
-  options, callback  
-  
+    return
+  )()
   return
+
+###
+  add document to collection
+###
+addDocumentToCollection = (options, callback) ->
+  connectToMongodbAndPerform (options, callback) ->
+    result = 
+      "err"    : ""
+      "status" : ""
+      "data"   : ""
+    
+    collection = options.collection
+    collection.insert options.object, (err, docs) ->
+
+      if err
+        result.status = false
+      else
+        result.status = true
+      
+      result.err  = err
+      result.data = docs
+      callback result
+      return
+    return
+  , options, callback
+  return
+exports.addDocumentToCollection = addDocumentToCollection
+
+
+exports.updateDocumentInCollection = (options, callback) ->
+  
+  connectToMongodbAndPerform (options, callback) ->
+    result = 
+      "err"    : ""
+      "status" : ""
+      "data"   : ""
+
+    collection = options.collection
+
+    collection.update options.object.searchParameter, { $set: options.object.updatedValue }, (err, docs) -> 
+      if err
+        result.status = false
+      else 
+        result.status = true
+      
+      result.err  = err
+      result.data = docs
+      callback result
+      return
+  ,
+  options, callback   
+  return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

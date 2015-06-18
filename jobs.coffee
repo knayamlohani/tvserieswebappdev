@@ -10,7 +10,7 @@ exports.performJobs = ->
 
   #to check for expired account authentication and password reset tokens and delete them from database
   
-  ###
+  
   setInterval () ->
     mongodbclient.deleteExpiredPasswordResetTokens "", (result) ->
       console.log result
@@ -29,7 +29,7 @@ exports.performJobs = ->
     return
   ,
   10*60*1000
-  ###
+  
   
 
   ###
@@ -45,8 +45,8 @@ exports.performJobs = ->
   ###
 
   
-  ###
-  setTimeout () ->
+  
+  setInterval () ->
 
     options = 
       "object":
@@ -70,27 +70,26 @@ exports.performJobs = ->
 
     return
   ,
-  1*60
-  ###
+  1*60*1000
+  
 
 
 
   
 
-  
-
-
-  #checks every 10 minutes for pending jobs (mailing subscriptions)
   
 
   ###
-  setTimeout () ->
+  checks every 10 minutes for pending jobs (mailing subscriptions)
+  ###
+
+  setInterval () ->
     console.log "sending mailSubscriptions"
     getMailSubscriptionJobsForToday()
     return
   ,
-  10*60
-  ###
+  1*60*1000
+  
   
   # function to generate mail subscription jobs
   generateJobs = (utcDateString, callback) ->
@@ -145,7 +144,9 @@ exports.performJobs = ->
 
   # function to get subscriptions for today
   getMailSubscriptionJobsForToday = () ->
+
     utcDate = moment.utc().format()
+    console.log "utcDate", utcDate
     utcDateString = utcDate.toString()
     dayOfWeek = getDaysNameFor moment(utcDateString).utc().day()
     console.log "today is", dayOfWeek

@@ -31,8 +31,13 @@ nav#app-nav-bar {
         color: white; }
 
 #message {
-  margin: 7em 0;
-  font-size: 2em;
-  font-weight: 100;
+  margin: 0;
+  margin-top: 15em;
   text-align: center;
   color: rgba(0, 0, 0, 0.5); }
+  #message #main-message {
+    font-size: 2.5em;
+    font-weight: 100; }
+  #message #other-message {
+    font-size: 1.5em;
+    font-weight: 100; }

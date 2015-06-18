@@ -19,7 +19,8 @@
     "email-templates" : "1.2.1",
     "nodemailer"      : "0.7.1",
     "node-sass"       : "0.9.3",
-    "moment"          : "2.10.2"
+    "moment"          : "2.10.2",
+    "debug"           : "2.2.0"
   },
   "engines": {
     "node": "0.10.x"

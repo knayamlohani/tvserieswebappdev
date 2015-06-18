@@ -11,27 +11,18 @@
   exports.performJobs = function() {
     var generateJobs, getDaysNameFor, getMailSubscriptionJobsForToday, mailSubscriptionsFor;
     setInterval(function() {}, 30 * 60);
-
-    /*
-    setInterval () ->
-      mongodbclient.deleteExpiredPasswordResetTokens "", (result) ->
-        console.log result
-        return
-    
-      mongodbclient.deleteExpiredAccountAuthenticationTokens "", (result) ->
-        console.log result
-        return
-    
-      return
-    
-      mongodbclient.deleteFinishedJobs "", (result) ->
-        console.log result
-        return
-    
-      return
-    ,
-    10*60*1000
-     */
+    setInterval(function() {
+      mongodbclient.deleteExpiredPasswordResetTokens("", function(result) {
+        console.log(result);
+      });
+      mongodbclient.deleteExpiredAccountAuthenticationTokens("", function(result) {
+        console.log(result);
+      });
+      return;
+      mongodbclient.deleteFinishedJobs("", function(result) {
+        console.log(result);
+      });
+    }, 10 * 60 * 1000);
 
     /*
       to check if mail subscriptions jobs for today were created
@@ -44,43 +35,36 @@
     
       runs every half and hour
      */
+    setInterval(function() {
+      var options;
+      options = {
+        "object": {
+          "type": "mailSubscriptions",
+          "date": moment.utc().format("MM-DD-YYYY").toString()
+        }
+      };
+      mongodbclient.checkIfJobsCreated(options, function(result) {
+        if (!result.err && !result.status) {
+          console.log("jobs not created for today");
+          generateJobs(moment.utc().format().toString(), function(result) {
+            console.log("created mail subscription jobs for today and now adding an entry to jobscreatedstatus table for mailsubscriptions jobs", result);
+            mongodbclient.addEntryToJobsCreatedStatusCollection(options, function(result) {
+              console.log("entry added to jobsCreatedStatus collection", result);
+            });
+          });
+        } else {
+          console.log("jobs already created for today");
+        }
+      });
+    }, 1 * 60 * 1000);
 
     /*
-    setTimeout () ->
-    
-      options = 
-        "object":
-          "type" : "mailSubscriptions"
-          "date" : moment.utc().format("MM-DD-YYYY").toString()
-    
-      mongodbclient.checkIfJobsCreated options, (result) ->
-        
-        if !result.err && !result.status
-          console.log "jobs not created for today"
-    
-          generateJobs moment.utc().format().toString(), (result) ->
-            console.log "created mail subscription jobs for today and now adding an entry to jobscreatedstatus table for mailsubscriptions jobs", result
-            mongodbclient.addEntryToJobsCreatedStatusCollection options, (result) ->
-              console.log "entry added to jobsCreatedStatus collection", result 
-              return
-            return
-        else
-          console.log "jobs already created for today"
-        return
-    
-      return
-    ,
-    1*60
+    checks every 10 minutes for pending jobs (mailing subscriptions)
      */
-
-    /*
-    setTimeout () ->
-      console.log "sending mailSubscriptions"
-      getMailSubscriptionJobsForToday()
-      return
-    ,
-    10*60
-     */
+    setInterval(function() {
+      console.log("sending mailSubscriptions");
+      getMailSubscriptionJobsForToday();
+    }, 1 * 60 * 1000);
     generateJobs = function(utcDateString, callback) {
       var currentDay, days, jobs, options;
       days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -117,6 +101,7 @@
     getMailSubscriptionJobsForToday = function() {
       var dayOfWeek, options, utcDate, utcDateString;
       utcDate = moment.utc().format();
+      console.log("utcDate", utcDate);
       utcDateString = utcDate.toString();
       dayOfWeek = getDaysNameFor(moment(utcDateString).utc().day());
       console.log("today is", dayOfWeek);

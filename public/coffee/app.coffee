@@ -83,11 +83,15 @@ app.controller 'controller',[ '$scope','$http',($scope,$http) ->
 					break
 				if banner.type == "poster" and !artworkFound
 					series.artworkUrl = banner.url
+					if window.innerWidth < 505 or window.innerWidth > 1100
+						series.currentArtworkUrl = series.artworkUrl
 					artworkFound = true
 					
 				if banner.type == "fanart" and !backgroundFound
 					series.backgroundImageUrl = banner.url
 					backgroundFound = true
+
+
 			$('#blur-layer').css "background", "#fafafa url(#{appData.artworkUrl}) 0 0 / cover"
 			$('body').css "background", "#fafafa url(#{appData.artworkUrl}) 0 0 / cover"
 
@@ -305,6 +309,25 @@ app.directive 'seriesSubscriptionDirective',[ '$http', ($http) ->
 		return
 ]
 		
+app.directive 'searchMoreSeriesDirective', [ '$http', '$timeout', ($http, $timeout) ->
+	link: (scope, element, attrs ) ->
+		scope.search = 
+			"query"     : ""
+			"results"   : []
+			"makeQuery" : () ->
+				
+				query = encodeURIComponent scope.search.query
+				url = "/series/seriesName/#{query}"
+
+				console.log "url", url
+				$http.get(url).success (data) ->
+					console.log "results", data
+					scope.search.results = data.seriesArray;
+					return
+
+				return
+		return 
+]
 
 $(window).ready ->
 	if navigator.platform != "MacIntel"
@@ -313,6 +336,15 @@ $(window).ready ->
 	height = screen.height
 	width  = screen.width
 	$('body').css "font-size", "#{15/1280*width}px"
+
+
+	$("#search-more-series").on 'click', (e) ->
+		$("#search-more-series #search-section").toggleClass 'hidden'
+
+	$("#search-more-series input").on 'click', (e) ->
+		e.stopPropagation()
+		return
+
 	return
 
 $(window).resize ->

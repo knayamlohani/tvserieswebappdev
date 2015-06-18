@@ -28,7 +28,10 @@
     <link rel="stylesheet" type="text/css" href="../css/reports.css">
     
     
-    <title>Reports</title>
+    <title>
+      TV Series: {{title}}
+
+    </title>
   </head>
 
   <body>
@@ -41,7 +44,8 @@
     </nav>
 
     <div id="message">
-      <p>{{message}}</p>
+      <p id="main-message">{{mainMessage}}</p>
+      <p id="other-message">{{otherMessage}}</p>
     </div>
 
     <script>

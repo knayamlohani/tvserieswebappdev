@@ -91,3 +91,20 @@ nav#app-nav-bar {
     color: #FA787E;
   }
 }
+
+#check-username-availability {
+  padding:.7em 2em;
+  .progress {
+    font-size: 1.3em;
+  }
+
+  .fa-search {
+    color: rgba(0,0,0,.7);
+    font-size: 1.4em;
+  }
+
+  .hidden {
+    display: none;
+  }
+}
+

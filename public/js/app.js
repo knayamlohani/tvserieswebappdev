@@ -90,6 +90,9 @@
             }
             if (banner.type === "poster" && !artworkFound) {
               series.artworkUrl = banner.url;
+              if (window.innerWidth < 505 || window.innerWidth > 1100) {
+                series.currentArtworkUrl = series.artworkUrl;
+              }
               artworkFound = true;
             }
             if (banner.type === "fanart" && !backgroundFound) {
@@ -328,6 +331,29 @@
     }
   ]);
 
+  app.directive('searchMoreSeriesDirective', [
+    '$http', '$timeout', function($http, $timeout) {
+      return {
+        link: function(scope, element, attrs) {
+          scope.search = {
+            "query": "",
+            "results": [],
+            "makeQuery": function() {
+              var query, url;
+              query = encodeURIComponent(scope.search.query);
+              url = "/series/seriesName/" + query;
+              console.log("url", url);
+              $http.get(url).success(function(data) {
+                console.log("results", data);
+                scope.search.results = data.seriesArray;
+              });
+            }
+          };
+        }
+      };
+    }
+  ]);
+
   $(window).ready(function() {
     var height, width;
     if (navigator.platform !== "MacIntel") {
@@ -336,6 +362,12 @@
     height = screen.height;
     width = screen.width;
     $('body').css("font-size", "" + (15 / 1280 * width) + "px");
+    $("#search-more-series").on('click', function(e) {
+      return $("#search-more-series #search-section").toggleClass('hidden');
+    });
+    $("#search-more-series input").on('click', function(e) {
+      e.stopPropagation();
+    });
   });
 
   $(window).resize(function() {
