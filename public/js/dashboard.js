@@ -139,6 +139,7 @@
               console.log("success unsubscribing", data);
               progressBar.removeClass("progress-bar-striped progress-bar-success progress-bar-danger");
               progressBar.addClass("progress-bar-success");
+              console.log("tv shows all", scope.appData.subscribedTvShows);
               if (!data.err) {
                 $timeout(function() {
                   var remove, _j, _len1, _ref1;

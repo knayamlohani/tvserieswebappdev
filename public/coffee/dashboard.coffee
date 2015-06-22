@@ -138,6 +138,7 @@ dashboardApp.directive 'confirmUnsubscribeDirective', ['$timeout','$http', ($tim
 		  	progressBar.removeClass "progress-bar-striped progress-bar-success progress-bar-danger"
 		  	progressBar.addClass "progress-bar-success"
 
+		  	console.log "tv shows all", scope.appData.subscribedTvShows
 		  	if !data.err
 		  		$timeout ->
 			    	for remove in scope.appData.tvShowsToBeUnsubscribed

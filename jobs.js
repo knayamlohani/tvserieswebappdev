@@ -9,8 +9,7 @@
   mailer = require('./mailer.js');
 
   exports.performJobs = function() {
-    var generateJobs, getDaysNameFor, getMailSubscriptionJobsForToday, mailSubscriptionsFor;
-    setInterval(function() {}, 30 * 60);
+    var checkIfJobsCreatedSubroutine, generateJobs, getDaysNameFor, getMailSubscriptionJobsForToday, mailSubscriptionsFor, mailSubscriptionsSubroutine;
     setInterval(function() {
       mongodbclient.deleteExpiredPasswordResetTokens("", function(result) {
         console.log(result);
@@ -20,6 +19,11 @@
       });
       return;
       mongodbclient.deleteFinishedJobs("", function(result) {
+        console.log(result);
+      });
+      mongodbclient.deleteExpiredJobsCreatedStatusCollectionEntries({
+        collection: ""
+      }, function(result) {
         console.log(result);
       });
     }, 10 * 60 * 1000);
@@ -35,8 +39,11 @@
     
       runs every half and hour
      */
-    setInterval(function() {
+    checkIfJobsCreatedSubroutine = function() {
       var options;
+      console.log("calling checkIfJobsCreatedSubroutine");
+      console.log("date:", moment.utc().hours(0).minutes(0).seconds(0).format().toString());
+      console.log("date:", moment.utc().format());
       options = {
         "object": {
           "type": "mailSubscriptions",
@@ -56,15 +63,18 @@
           console.log("jobs already created for today");
         }
       });
-    }, 1 * 60 * 1000);
+    };
+    checkIfJobsCreatedSubroutine();
+    setInterval(checkIfJobsCreatedSubroutine, 2 * 60 * 1000);
 
     /*
     checks every 10 minutes for pending jobs (mailing subscriptions)
      */
-    setInterval(function() {
-      console.log("sending mailSubscriptions");
+    mailSubscriptionsSubroutine = function() {
+      console.log("calling mailSubscriptions subroutine");
       getMailSubscriptionJobsForToday();
-    }, 1 * 60 * 1000);
+    };
+    setInterval(mailSubscriptionsSubroutine, 1 * 60 * 1000);
     generateJobs = function(utcDateString, callback) {
       var currentDay, days, jobs, options;
       days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -78,24 +88,26 @@
       };
       mongodbclient.getTvShowsAiringOn(options, function(result) {
         var deliveryTime, job, sixAM, tvShow, _i, _len, _ref;
-        _ref = result.data;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          tvShow = _ref[_i];
-          sixAM = moment(utcDateString).utc().hours(6).minutes(0).seconds(0).format().toString();
-          deliveryTime = moment(sixAM).utc().subtract(tvShow.subscribersTimeZone, 'hours').utc().format().toString();
-          job = {
-            "email": tvShow.subscribersEmail,
-            "deliveryTime": deliveryTime,
-            "status": "queue",
-            "day": tvShow.airsOnDayOfWeek,
-            "type": "mailSubscriptions"
-          };
-          jobs.push(job);
+        if (!result.err) {
+          _ref = result.data;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            tvShow = _ref[_i];
+            sixAM = moment(utcDateString).utc().hours(6).minutes(0).seconds(0).format().toString();
+            deliveryTime = moment(sixAM).utc().subtract(tvShow.subscribersTimeZone, 'hours').utc().format().toString();
+            job = {
+              "email": tvShow.subscribersEmail,
+              "deliveryTime": deliveryTime,
+              "status": "queue",
+              "day": tvShow.airsOnDayOfWeek,
+              "type": "mailSubscriptions"
+            };
+            jobs.push(job);
+          }
+          console.log("jobs", jobs);
+          mongodbclient.addNewJob(options = {
+            "object": job
+          }, callback);
         }
-        console.log("jobs", jobs);
-        mongodbclient.addNewJob(options = {
-          "object": job
-        }, callback);
       });
     };
     getMailSubscriptionJobsForToday = function() {
@@ -103,6 +115,7 @@
       utcDate = moment.utc().format();
       console.log("utcDate", utcDate);
       utcDateString = utcDate.toString();
+      console.log("utcdatestring", utcDateString);
       dayOfWeek = getDaysNameFor(moment(utcDateString).utc().day());
       console.log("today is", dayOfWeek);
       options = {
@@ -114,33 +127,36 @@
       mongodbclient.getMailSubscriptionJobs(options, function(result) {
         var data, job, _i, _len, _ref;
         console.log("result", result);
-        data = result.data;
-        _ref = result.data;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          job = _ref[_i];
-          if (moment(utcDateString) - moment(job.deliveryTime) >= 0) {
-            (function(job) {
-              console.log("mailing subscriptions for", job.email);
-              mailSubscriptionsFor({
-                "email": job.email,
-                "day": job.day
-              }, function(result) {
-                console.log("mailed subscriptions for ", job.email, "result", result);
-                mongodbclient.updateDocumentInCollection(options = {
-                  "object": {
-                    "searchParameter": {
-                      "email": job.email
-                    },
-                    "updatedValue": {
-                      "status": "finished"
-                    }
-                  },
-                  "collection": "jobs"
+        if (!result.err) {
+          data = result.data;
+          _ref = result.data;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            job = _ref[_i];
+            if (moment(utcDateString) - moment(job.deliveryTime) >= 0) {
+              (function(job) {
+                console.log("mailing subscriptions for", job.email);
+                mailSubscriptionsFor({
+                  "email": job.email,
+                  "day": job.day
                 }, function(result) {
-                  console.log("updated job status to finished, result ", result);
+                  console.log("mailed subscriptions for ", job.email, "result", result);
+                  mongodbclient.updateDocumentInCollection(options = {
+                    "object": {
+                      "searchParameter": {
+                        "email": job.email,
+                        "_id": job["_id"]
+                      },
+                      "updatedValue": {
+                        "status": "finished"
+                      }
+                    },
+                    "collection": "jobs"
+                  }, function(result) {
+                    console.log("updated job status to finished, result ", result);
+                  });
                 });
-              });
-            })(job);
+              })(job);
+            }
           }
         }
       });
@@ -153,40 +169,45 @@
           "subscribersEmail": subscriber.email
         }
       };
+      console.log("date:", moment.utc().hours(0).minutes(0).seconds(0).format().toString());
       console.log("mailing subscriptions");
       mongodbclient.getTvShowsAiringOn(options, function(result) {
-        var allUsers, subscribers, temp, tvShow, user, _i, _j, _len, _len1, _ref;
-        subscribers = {};
-        allUsers = [];
-        temp = [];
-        _ref = result.data;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          tvShow = _ref[_i];
-          if (!subscribers[tvShow.subscribersUsername]) {
-            subscribers[tvShow.subscribersUsername] = {};
-            subscribers[tvShow.subscribersUsername].tvShows = [];
-            subscribers[tvShow.subscribersUsername].email = tvShow.subscribersEmail;
-            subscribers[tvShow.subscribersUsername].username = tvShow.subscribersUsername;
-            subscribers[tvShow.subscribersUsername].name = tvShow.subscribersFirstName + " " + tvShow.subscribersLastName;
-            allUsers.push(tvShow.subscribersUsername);
+        var allUsers, episodesAiringForSeriesWithIdToday, subscribers, temp, tvShow, user, _i, _j, _len, _len1, _ref;
+        if (!result.err) {
+          subscribers = {};
+          allUsers = [];
+          temp = [];
+          episodesAiringForSeriesWithIdToday = [];
+          _ref = result.data;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            tvShow = _ref[_i];
+            if (!subscribers[tvShow.subscribersUsername]) {
+              subscribers[tvShow.subscribersUsername] = {};
+              subscribers[tvShow.subscribersUsername].tvShows = [];
+              subscribers[tvShow.subscribersUsername].email = tvShow.subscribersEmail;
+              subscribers[tvShow.subscribersUsername].username = tvShow.subscribersUsername;
+              subscribers[tvShow.subscribersUsername].name = tvShow.subscribersFirstName + " " + tvShow.subscribersLastName;
+              allUsers.push(tvShow.subscribersUsername);
+            }
+            subscribers[tvShow.subscribersUsername].tvShows.push({
+              "name": tvShow.name,
+              "id": tvShow.id,
+              "artworkUrl": tvShow.artworkUrl,
+              "episodeName": ""
+            });
           }
-          subscribers[tvShow.subscribersUsername].tvShows.push({
-            "name": tvShow.name,
-            "id": tvShow.id,
-            "artworkUrl": tvShow.artworkUrl
-          });
+          for (_j = 0, _len1 = allUsers.length; _j < _len1; _j++) {
+            user = allUsers[_j];
+            temp.push({
+              "email": subscribers[user].email,
+              "name": subscribers[user].name,
+              "username": subscribers[user].username,
+              "tvShows": subscribers[user].tvShows
+            });
+          }
+          console.log(JSON.stringify(temp, null, 4));
+          mailer.mailSubscriptions(temp, callback);
         }
-        for (_j = 0, _len1 = allUsers.length; _j < _len1; _j++) {
-          user = allUsers[_j];
-          temp.push({
-            "email": subscribers[user].email,
-            "name": subscribers[user].name,
-            "username": subscribers[user].username,
-            "tvShows": subscribers[user].tvShows
-          });
-        }
-        console.log(JSON.stringify(temp, null, 4));
-        mailer.mailSubscriptions(temp, callback);
       });
     };
     getDaysNameFor = function(dayNo) {

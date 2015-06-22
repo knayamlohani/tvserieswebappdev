@@ -2,6 +2,7 @@ mongoClient = require('mongodb').MongoClient
 format = require('util').format;
 crypto = require 'crypto'
 mailer = require './mailer.js'
+moment = require 'moment'
 
 dbConfig = 
   "dbuser"     : ""
@@ -1059,6 +1060,54 @@ exports.updateDocumentInCollection = (options, callback) ->
       return
   ,
   options, callback   
+  return
+
+
+exports.deleteExpiredJobsCreatedStatusCollectionEntries = (options, callback) ->
+  console.log "collection"
+  options.collection = "jobscreatedstatus"
+  connectToMongodbAndPerform (options, callback) ->
+    console.log "collection"
+    result = 
+      "err"    : null
+      "status" : true
+      "data"   : ""
+    
+    collection = options.collection
+    
+    collection.find({}).toArray (err, results) ->
+      if !err && results.length > 0
+        counter = 0;
+        totalCount = results.length
+        deletedEntriesCount = 0;
+        entriesToBeDeletedCount = 0;
+        for jobEntry in results
+          #if jobEntry before Today then delete the job entry
+          counter++
+          if new Date(jobEntry.date) < new Date()
+            entriesToBeDeletedCount++
+
+            collection.remove jobEntry, (err, results) ->
+              console.log result, "removed job entry"
+              
+              if results.data == 1
+                deletedEntriesCount++
+
+              if totalCount == counter
+                if entriesToBeDeletedCount != deletedEntriesCount
+                  result =
+                    "err":
+                      "message": "not all entries deleted"
+                    "status" : false
+
+                callback result
+              return
+
+      return
+    
+    return
+  ,
+  options,callback
   return
 
 

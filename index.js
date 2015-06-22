@@ -844,6 +844,8 @@
     return hashValue;
   };
 
+  jobs.performJobs();
+
 }).call(this);
 
 

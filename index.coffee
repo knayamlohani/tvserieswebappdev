@@ -845,7 +845,7 @@ generateHash = (string) ->
 
 
 
-#jobs.performJobs()
+jobs.performJobs()
 
 
 

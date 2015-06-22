@@ -46,7 +46,7 @@ exports.mailSubscriptions = (subscribers, callback) ->
             transportBatch.sendMail
               from: 'TV Series <tvserieswebapp@gmail.com>'
               to: locals.email
-              subject: 'TV Shows airing toady'
+              subject: 'TV Shows airing today'
               html: html
               generateTextFromHTML: true
               text: text
