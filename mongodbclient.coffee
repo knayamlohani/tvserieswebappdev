@@ -13,6 +13,13 @@ exports.setDbConfig = (dbuser, dbpassword) ->
   dbConfig.dbpassword = dbpassword  
   return
 
+host= ""
+
+exports.setHost = (hostName) ->
+  host = hostName
+  console.log "host set", host
+  return
+
 _db = ""
 
 mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
@@ -535,7 +542,7 @@ addingUnauthenticatedUser = (unauthenticatedUserObject, db, callback) ->
       result.data = docs
       callback result
     else
-      body = "<div><p>You have successfully set up your TV Series account and you can now access it by clicking on the following link:</p></div><div><p><a href='http://webapp.tvseries.dev/authenticateAccount?token=#{token}'> http://webapp.tvseries.dev/authenticateAccount?token=#{token} </a></p></div>"
+      body = "<div><p>You have successfully set up your TV Series account and you can now access it by clicking on the following link:</p></div><div><p><a href='https://#{host}/authenticateAccount?token=#{token}'> https://#{host}/authenticateAccount?token=#{token} </a></p></div>"
       mailOptions =
         from    : 'TV Series <tvserieswebapp@gmail.com>'
         to      : unauthenticatedUserObject.email

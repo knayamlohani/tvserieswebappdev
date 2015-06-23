@@ -4,6 +4,11 @@ moment         = require 'moment'
 mailer         = require './mailer.js'
 request        = require 'request'
 http           = require 'http'
+host= ""
+exports.setHost = (hostName) ->
+  host = hostName
+  console.log "host set", host
+  return
 exports.performJobs = ->
 
   ###
@@ -224,7 +229,7 @@ exports.performJobs = ->
 
 
   
-  mailSubscriptionsFor = (subscriber, callback) ->
+  mailSubscriptionsFor2 = (subscriber, callback) ->
     
 
     options =
@@ -263,11 +268,14 @@ exports.performJobs = ->
 
           #checking if the tvshow actually airs today
           options = 
-            "url" : "/series?id=:#{tvShow.id}/episode?airDate=:#{new Date()}"
+            "url" : "https://#{host}/seriesWithId=#{tvShow.id}/episodeWithAirDate=#{moment.utc().format('DD-MM-YYYY')}"
 
-          options.url = "/episode?id=#{tvShow.id}&airDate=#{new Date()}"
-          makeHttpGetRequest options, (res) ->
-            console.log "res episode airing today", res
+          
+          #options.url = "https://#{host}/seriesWithId=#{tvShow.id}/episodeWithAirDate=#{moment.utc().format('DD-MM-YYYY')}"
+          #console.log "options", options
+          
+          request options.url, (error, response, body) ->
+            console.log "request", body
             return
 
 
@@ -279,7 +287,7 @@ exports.performJobs = ->
             "artworkUrl"  : tvShow.artworkUrl
             "episodeName" : ""
 
-        #console.log "subscribers today -\n", JSON.stringify subscribers, null, 4
+        console.log "subscribers today -\n", JSON.stringify subscribers, null, 4
         usersCount = allUsers.length
         
         for user in allUsers
@@ -297,6 +305,107 @@ exports.performJobs = ->
 
     return
 
+  mailSubscriptionsFor = (subscriber, callback) ->
+    
+
+    options =
+      "object" : 
+        "airsOnDayOfWeek"  : subscriber.day
+        "subscribersEmail" : subscriber.email
+
+    #console.log "date:", moment.utc().hours(0).minutes(0).seconds(0).format().toString()
+
+    console.log "mailing subscriptions"
+
+    mongodbclient.getTvShowsAiringOn options, (result) ->
+    #console.log "TV Shows Airing on #{currentDay} -\n", result
+
+      #console.log "tv shows for given subscriber are", result.data
+      if !result.err
+
+        subscribers = {}
+        allUsers = []
+        temp = []
+
+        episodesAiringForSeriesWithIdToday = []
+        tvShowsCount = result.data.length
+        counter = 0;
+
+        for tvShow in result.data
+          
+          if !subscribers[tvShow.subscribersUsername]
+            subscribers[tvShow.subscribersUsername] = {}
+            subscribers[tvShow.subscribersUsername].tvShows = []
+            subscribers[tvShow.subscribersUsername].email = tvShow.subscribersEmail
+            subscribers[tvShow.subscribersUsername].username = tvShow.subscribersUsername
+            subscribers[tvShow.subscribersUsername].name = tvShow.subscribersFirstName + " " + tvShow.subscribersLastName
+            allUsers.push tvShow.subscribersUsername
+
+
+          #checking if the tvshow actually airs today
+          options = 
+            "url" : "https://#{host}/seriesWithId=#{tvShow.id}/episodeWithAirDate=#{moment.utc().format('DD-MM-YYYY')}"
+
+          
+          #options.url = "https://#{host}/seriesWithId=#{tvShow.id}/episodeWithAirDate=#{moment.utc().format('DD-MM-YYYY')}"
+          #console.log "options", options
+          ((tvShow) ->
+            request options.url, (error, response, body) ->
+              counter++
+              episode = JSON.parse body
+              console.log "request", episode.number, " ", episode.name
+              if moment.utc(episode.airDate).format('DD-MM-YYYY') == moment.utc().format('DD-MM-YYYY')
+                console.log "request", episode
+                subscribers[tvShow.subscribersUsername].tvShows.push 
+                  "name"        : tvShow.name
+                  "id"          : tvShow.id
+                  "artworkUrl"  : tvShow.artworkUrl
+                  "episodeName" : "S#{if episode.season < 10 then 0 else ""}#{episode.season}E#{if episode.number < 10 then 0 else ""}#{episode.number} #{episode.name}"
+              
+              if counter == tvShowsCount
+                console.log "subscribers today -\n", JSON.stringify subscribers, null, 4
+                usersCount = allUsers.length
+                
+                for user in allUsers
+                  temp.push
+                    "email"    : subscribers[user].email
+                    "name"     : subscribers[user].name
+                    "username" : subscribers[user].username
+                    "tvShows"  : subscribers[user].tvShows
+
+                console.log "todays airing", JSON.stringify temp, null, 4
+                mailer.mailSubscriptions temp, callback
+              return
+            return
+          )(tvShow)
+
+
+          ###
+          subscribers[tvShow.subscribersUsername].tvShows.push 
+            "name"        : tvShow.name
+            "id"          : tvShow.id
+            "artworkUrl"  : tvShow.artworkUrl
+            "episodeName" : ""
+          ###
+
+         ### 
+        console.log "subscribers today -\n", JSON.stringify subscribers, null, 4
+        usersCount = allUsers.length
+        
+        for user in allUsers
+          temp.push
+            "email"    : subscribers[user].email
+            "name"     : subscribers[user].name
+            "username" : subscribers[user].username
+            "tvShows"  : subscribers[user].tvShows
+        ###
+        console.log JSON.stringify temp, null, 4
+        #mailer.mailSubscriptions temp, callback
+      
+      return
+      
+
+    return
 
   #mailSubscriptionsFor "Saturday"
 

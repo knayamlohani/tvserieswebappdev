@@ -14,6 +14,12 @@ exports.setEmailAccount = (account) ->
   emailAccount.password = account.password
   return
 
+host= ""
+exports.setHost = (hostName) ->
+  host = hostName
+  console.log "host set", host
+  return
+
 exports.mailSubscriptions = (subscribers, callback) -> 
 
   emailTemplates templatesDir, (err, template) ->
@@ -132,7 +138,7 @@ generateHashFromTokenAndMailResetLink = (email, token) ->
  
   # setup e-mail data with unicode symbols 
 
-  body = "<a href='http://webapp.tvseries.dev/resetPassword?token=#{token}'> http://webapp.tvseries.dev/resetPassword?token=#{token} </a>"
+  body = "<a href='https://#{host}/resetPassword?token=#{token}'> http://#{host}/resetPassword?token=#{token} </a>"
   mailOptions =
     from    : 'TV Series <tvserieswebapp@gmail.com>'
     to      : email

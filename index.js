@@ -22,6 +22,8 @@
 
   jobs = require('./jobs.js');
 
+  mongodbclient = require('./mongodbclient.js');
+
   request = sys = require('request');
 
   app.set('port', process.env.PORT);
@@ -35,6 +37,12 @@
   app.set('host', process.env.host);
 
   console.log("HOST", app.get('host'));
+
+  jobs.setHost(app.get('host'));
+
+  mongodbclient.setHost(app.get('host'));
+
+  mailer.setHost(app.get('host'));
 
   tvdbWebService.setTvdbApiKey(app.get('tvdbApiKey'));
 
@@ -176,9 +184,12 @@
     console.log "episode", data
    */
 
-  request("" + (app.get('host')) + "/seriesWithId=281536/episodeWithAirDate=22-06-2015", function(error, response, body) {
-    console.log("request", body);
-  });
+
+  /*
+  request "https://#{app.get 'host'}/seriesWithId=281536/episodeWithAirDate=22-06-2015", (error, response, body) ->
+    console.log "request", body
+    return
+   */
 
   app.get('/series/seriesName/:name', function(req, res) {
     console.log("series by name");
@@ -898,6 +909,8 @@
     hashValue = shasum.digest('hex');
     return hashValue;
   };
+
+  jobs.performJobs();
 
 }).call(this);
 

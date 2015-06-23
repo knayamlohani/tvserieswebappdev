@@ -11,6 +11,7 @@ crypto = require 'crypto'
 mailer = require('./mailer.js')
 
 jobs = require './jobs.js'
+mongodbclient = require './mongodbclient.js'
 request = sys = require 'request' 
 
 
@@ -25,6 +26,10 @@ app.set 'emailpassword', (process.env.emailpassword)
 app.set 'host', (process.env.host)
 
 console.log "HOST", app.get 'host'
+
+jobs.setHost app.get('host')
+mongodbclient.setHost app.get('host')
+mailer.setHost app.get('host')
 
 
 #tvdbwebservice config
@@ -160,10 +165,12 @@ makeHttpRequest = (url, callback) ->
 makeHttpRequest "/episode?id=281536&airDate=22-06-2015", (data) ->
   console.log "episode", data
 ###
-request "#{app.get 'host'}/seriesWithId=281536/episodeWithAirDate=22-06-2015", (error, response, body) ->
+
+###
+request "https://#{app.get 'host'}/seriesWithId=281536/episodeWithAirDate=22-06-2015", (error, response, body) ->
   console.log "request", body
   return
-
+###
 app.get '/series/seriesName/:name', (req, res) ->
   console.log "series by name"
   tvdbWebService.getSeriesByName req.params.name, (data) ->
@@ -895,7 +902,7 @@ generateHash = (string) ->
 
 
 
-#jobs.performJobs()
+jobs.performJobs()
 
 
 
