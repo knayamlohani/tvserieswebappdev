@@ -619,6 +619,7 @@ authenticatingAccount = (token, db, callback) ->
 
 
 exports.deleteExpiredPasswordResetTokens = (options, callback) ->
+  console.log "calling deleteExpiredPasswordResetTokens"
   createMongodbConnectionAndPerform (options, db, callback) ->
     result = 
       "err"    : ""
@@ -645,6 +646,7 @@ exports.deleteExpiredPasswordResetTokens = (options, callback) ->
   return
 
 exports.deleteExpiredAccountAuthenticationTokens = (options, callback) ->
+  console.log "calling deleteExpiredAccountAuthenticationTokens"
   createMongodbConnectionAndPerform (options, db, callback) ->
     result = 
       "err"    : ""
@@ -768,7 +770,7 @@ exports.checkIfJobsCreated = (options, callback) ->
       else 
         result.status = true
       
-      if results.length == 0
+      if !err && results.length == 0
         result.status = false
         
       result.err = err
@@ -1064,10 +1066,10 @@ exports.updateDocumentInCollection = (options, callback) ->
 
 
 exports.deleteExpiredJobsCreatedStatusCollectionEntries = (options, callback) ->
-  console.log "collection"
+  console.log "calling deleteExpiredJobsCreatedStatusCollectionEntries"
   options.collection = "jobscreatedstatus"
   connectToMongodbAndPerform (options, callback) ->
-    console.log "collection"
+    
     result = 
       "err"    : null
       "status" : true
@@ -1084,7 +1086,10 @@ exports.deleteExpiredJobsCreatedStatusCollectionEntries = (options, callback) ->
         for jobEntry in results
           #if jobEntry before Today then delete the job entry
           counter++
-          if new Date(jobEntry.date) < new Date()
+          now = new Date()
+          now.setHours(now.getHours() - 24)
+          if new Date(jobEntry.date) < now
+            console.log "job created status date", new Date(jobEntry.date), "now", new Date()
             entriesToBeDeletedCount++
 
             collection.remove jobEntry, (err, results) ->
@@ -1099,6 +1104,57 @@ exports.deleteExpiredJobsCreatedStatusCollectionEntries = (options, callback) ->
                     "err":
                       "message": "not all entries deleted"
                     "status" : false
+
+                callback result
+              return
+
+      return
+    
+    return
+  ,
+  options,callback
+  return
+
+
+exports.deleteEntriesFromJobsCollectionWithStatusFinished = (options, callback) ->
+  
+  console.log "calling deleteEntriesFromJobsCollectionWithStatusFinished"
+  options.collection = "jobs"
+  connectToMongodbAndPerform (options, callback) ->
+    
+    result = 
+      "err"    : null
+      "status" : true
+      "data"   : ""
+    
+    collection = options.collection
+    
+    collection.find({}).toArray (err, results) ->
+      if !err && results.length > 0
+        counter = 0;
+        totalCount = results.length
+        deletedEntriesCount = 0;
+        entriesToBeDeletedCount = 0;
+        for jobEntry in results
+          #if jobEntry before Today then delete the job entry
+          counter++
+          if jobEntry.status == "finished"
+            entriesToBeDeletedCount++
+
+            collection.remove jobEntry, (err, results) ->
+              console.log result, "removed job entry"
+              
+              if results.data == 1
+                deletedEntriesCount++
+
+              if totalCount == counter
+                if deletedEntriesCount < entriesToBeDeletedCount
+                  result =
+                    "err":
+                      "message": "not all entries deleted with status finished"
+                    "status" : false
+                else
+                  result.data = 1
 
                 callback result
               return

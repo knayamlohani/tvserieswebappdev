@@ -661,6 +661,7 @@
   };
 
   exports.deleteExpiredPasswordResetTokens = function(options, callback) {
+    console.log("calling deleteExpiredPasswordResetTokens");
     createMongodbConnectionAndPerform(function(options, db, callback) {
       var collection, result;
       result = {
@@ -688,6 +689,7 @@
   };
 
   exports.deleteExpiredAccountAuthenticationTokens = function(options, callback) {
+    console.log("calling deleteExpiredAccountAuthenticationTokens");
     createMongodbConnectionAndPerform(function(options, db, callback) {
       var collection, result;
       result = {
@@ -799,7 +801,7 @@
         } else {
           result.status = true;
         }
-        if (results.length === 0) {
+        if (!err && results.length === 0) {
           result.status = false;
         }
         result.err = err;
@@ -1082,11 +1084,60 @@
   };
 
   exports.deleteExpiredJobsCreatedStatusCollectionEntries = function(options, callback) {
-    console.log("collection");
+    console.log("calling deleteExpiredJobsCreatedStatusCollectionEntries");
     options.collection = "jobscreatedstatus";
     connectToMongodbAndPerform(function(options, callback) {
       var collection, result;
-      console.log("collection");
+      result = {
+        "err": null,
+        "status": true,
+        "data": ""
+      };
+      collection = options.collection;
+      collection.find({}).toArray(function(err, results) {
+        var counter, deletedEntriesCount, entriesToBeDeletedCount, jobEntry, now, totalCount, _i, _len;
+        if (!err && results.length > 0) {
+          counter = 0;
+          totalCount = results.length;
+          deletedEntriesCount = 0;
+          entriesToBeDeletedCount = 0;
+          for (_i = 0, _len = results.length; _i < _len; _i++) {
+            jobEntry = results[_i];
+            counter++;
+            now = new Date();
+            now.setHours(now.getHours() - 24);
+            if (new Date(jobEntry.date) < now) {
+              console.log("job created status date", new Date(jobEntry.date), "now", new Date());
+              entriesToBeDeletedCount++;
+              collection.remove(jobEntry, function(err, results) {
+                console.log(result, "removed job entry");
+                if (results.data === 1) {
+                  deletedEntriesCount++;
+                }
+                if (totalCount === counter) {
+                  if (entriesToBeDeletedCount !== deletedEntriesCount) {
+                    result = {
+                      "err": {
+                        "message": "not all entries deleted"
+                      },
+                      "status": false
+                    };
+                  }
+                  callback(result);
+                }
+              });
+            }
+          }
+        }
+      });
+    }, options, callback);
+  };
+
+  exports.deleteEntriesFromJobsCollectionWithStatusFinished = function(options, callback) {
+    console.log("calling deleteEntriesFromJobsCollectionWithStatusFinished");
+    options.collection = "jobs";
+    connectToMongodbAndPerform(function(options, callback) {
+      var collection, result;
       result = {
         "err": null,
         "status": true,
@@ -1103,7 +1154,7 @@
           for (_i = 0, _len = results.length; _i < _len; _i++) {
             jobEntry = results[_i];
             counter++;
-            if (new Date(jobEntry.date) < new Date()) {
+            if (jobEntry.status === "finished") {
               entriesToBeDeletedCount++;
               collection.remove(jobEntry, function(err, results) {
                 console.log(result, "removed job entry");
@@ -1111,13 +1162,15 @@
                   deletedEntriesCount++;
                 }
                 if (totalCount === counter) {
-                  if (entriesToBeDeletedCount !== deletedEntriesCount) {
+                  if (deletedEntriesCount < entriesToBeDeletedCount) {
                     result = {
                       "err": {
-                        "message": "not all entries deleted"
+                        "message": "not all entries deleted with status finished"
                       },
                       "status": false
                     };
+                  } else {
+                    result.data = 1;
                   }
                   callback(result);
                 }

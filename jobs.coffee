@@ -2,36 +2,61 @@
 mongodbclient  = require './mongodbclient.js'
 moment         = require 'moment'
 mailer         = require './mailer.js'
+request        = require 'request'
+http           = require 'http'
 exports.performJobs = ->
 
-  #to check for expired account authentication and password reset tokens and delete them from database
+  ###
+    deletes the expired or finished entries in various collections from the database  
+  ###
   
   
-  setInterval () ->
+  deleteExpiredAndFinishedEntriesInCollectionsSubroutine = () ->
+    console.log "calling deleteExpiredAndFinishedEntriesInCollectionsSubroutine"
+    ###
+
+    ###
     mongodbclient.deleteExpiredPasswordResetTokens "", (result) ->
-      console.log result
+      console.log "deleteExpiredPasswordResetTokens result", result
       return
 
+    ###
+    
+    ###
     mongodbclient.deleteExpiredAccountAuthenticationTokens "", (result) ->
-      console.log result
+      console.log "deleteExpiredAccountAuthenticationTokens result", result
       return
 
-    return
-
-    mongodbclient.deleteFinishedJobs "", (result) ->
-      console.log result
-      return
-
-    mongodbclient.deleteExpiredJobsCreatedStatusCollectionEntries
-      collection: ""
+    ###
+    
+    ###
+    
+    ###
+    mongodbclient.deleteEntriesFromJobsCollectionWithStatusFinished options =
+      "collection" : ""
     , 
     (result) ->
-      console.log result
+      console.log "deleteEntriesFromJobsCollectionWithStatusFinished result", result
       return
+    ###
+   
 
+    ###
+    
+    ###
+
+    ###
+    mongodbclient.deleteExpiredJobsCreatedStatusCollectionEntries options =
+      "collection" : ""
+    , 
+    (result) ->
+      console.log "deleteExpiredJobsCreatedStatusCollectionEntries result", result
+      return
+    ###
     return
-  ,
-  10*60*1000
+
+  deleteExpiredAndFinishedEntriesInCollectionsSubroutine()
+  setInterval deleteExpiredAndFinishedEntriesInCollectionsSubroutine, 30*60*1000
   
 
 
@@ -49,8 +74,8 @@ exports.performJobs = ->
 
   checkIfJobsCreatedSubroutine = () ->
     console.log "calling checkIfJobsCreatedSubroutine"
-    console.log "date:", moment.utc().hours(0).minutes(0).seconds(0).format().toString()
-    console.log "date:", moment.utc().format()
+    #console.log "date:", moment.utc().hours(0).minutes(0).seconds(0).format().toString()
+    #console.log "date:", moment.utc().format()
     options = 
       "object":
         "type" : "mailSubscriptions"
@@ -133,7 +158,7 @@ exports.performJobs = ->
           #if !jobs.contains job
           jobs.push job
 
-        console.log "jobs", jobs
+        #console.log "jobs entries", jobs
         mongodbclient.addNewJob options =
           "object" : job
         , 
@@ -207,7 +232,7 @@ exports.performJobs = ->
         "airsOnDayOfWeek"  : subscriber.day
         "subscribersEmail" : subscriber.email
 
-    console.log "date:", moment.utc().hours(0).minutes(0).seconds(0).format().toString()
+    #console.log "date:", moment.utc().hours(0).minutes(0).seconds(0).format().toString()
 
     console.log "mailing subscriptions"
 
@@ -222,17 +247,30 @@ exports.performJobs = ->
         temp = []
 
         episodesAiringForSeriesWithIdToday = []
+        tvShowsCount = result.data.length
+        counter = 0;
 
         for tvShow in result.data
-
+          counter++
           if !subscribers[tvShow.subscribersUsername]
             subscribers[tvShow.subscribersUsername] = {}
             subscribers[tvShow.subscribersUsername].tvShows = []
             subscribers[tvShow.subscribersUsername].email = tvShow.subscribersEmail
             subscribers[tvShow.subscribersUsername].username = tvShow.subscribersUsername
             subscribers[tvShow.subscribersUsername].name = tvShow.subscribersFirstName + " " + tvShow.subscribersLastName
-
             allUsers.push tvShow.subscribersUsername
+
+
+          #checking if the tvshow actually airs today
+          options = 
+            "url" : "/series?id=:#{tvShow.id}/episode?airDate=:#{new Date()}"
+
+          options.url = "/episode?id=#{tvShow.id}&airDate=#{new Date()}"
+          makeHttpGetRequest options, (res) ->
+            console.log "res episode airing today", res
+            return
+
+
 
 
           subscribers[tvShow.subscribersUsername].tvShows.push 
@@ -242,7 +280,8 @@ exports.performJobs = ->
             "episodeName" : ""
 
         #console.log "subscribers today -\n", JSON.stringify subscribers, null, 4
-
+        usersCount = allUsers.length
+        
         for user in allUsers
           temp.push
             "email"    : subscribers[user].email
@@ -251,7 +290,7 @@ exports.performJobs = ->
             "tvShows"  : subscribers[user].tvShows
         
         console.log JSON.stringify temp, null, 4
-        mailer.mailSubscriptions temp, callback
+        #mailer.mailSubscriptions temp, callback
       
       return
       
@@ -265,6 +304,12 @@ exports.performJobs = ->
     days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     return days[dayNo]
 
-  
+  makeHttpGetRequest = (options, callback) ->
+    console.log "making http request", options.url
+    request options.url, (error, response, body) ->
+      console.log "episode body", body
+      return
+    return
+    
   
   return
