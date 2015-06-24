@@ -351,10 +351,10 @@ exports.performJobs = ->
           ((tvShow) ->
             #checking if the tvshow actually airs today
             if !today
-              today = moment.utc().format('DD-MM-YYYY')
+              today = moment.utc()
 
             options = 
-              "url" : "https://#{host}/seriesWithId=#{tvShow.id}/episodeWithAirDate=#{today}"
+              "url" : "https://#{host}/seriesWithId=#{tvShow.id}/episodeWithAirDate=#{today.format('DD-MM-YYYY')}"
             
             request options.url, (error, response, body) ->
               counter++
@@ -363,7 +363,7 @@ exports.performJobs = ->
 
               
 
-              if moment.utc(episode.airDate).format('DD-MM-YYYY') == today
+              if moment.utc(episode.airDate).format('DD-MM-YYYY') == today.format('DD-MM-YYYY')
                 console.log "request", episode
                 subscribers[tvShow.subscribersUsername].tvShows.push 
                   "name"        : tvShow.name
@@ -383,6 +383,7 @@ exports.performJobs = ->
                     "username" : subscribers[user].username
                     "tvShows"  : subscribers[user].tvShows
                     "airDay"   : getDaysNameFor today.day()
+                    "noTvShows": if subscribers[user].tvShows.length == 0 then true else false
 
                 console.log "airing today", JSON.stringify temp, null, 4
                 mailer.mailSubscriptions temp, callback

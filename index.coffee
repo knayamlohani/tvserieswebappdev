@@ -20,7 +20,7 @@ request = sys = require 'request'
 
 #app config
 app.set 'port', (process.env.PORT)
-app.set 'tvdbApiKey', (process.env.TVDB_API_KEY)
+app.set 'tvdbApiKey', (process.env["tvdbapikey"])
 app.set 'emailusername', (process.env.emailusername)
 app.set 'emailpassword', (process.env.emailpassword)
 app.set 'host', (process.env.host)
@@ -42,8 +42,12 @@ mailer.setEmailAccount
 
 
 # mongo db config
+
+console.log process.env["databaseuri"]
 mongodbclient = require('./mongodbclient.js')
-mongodbclient.setDbConfig process.env["DB_USER"], process.env["DB_PASSWORD"]
+
+
+mongodbclient.setDbConfig process.env["dbuser"], process.env["dbpassword"], process.env["dburi"]
 cookieParser = require('cookie-parser')
 app.use(cookieParser());
 
@@ -902,7 +906,7 @@ generateHash = (string) ->
 
 
 
-#jobs.performJobs()
+jobs.performJobs()
 
 
 

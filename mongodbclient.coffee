@@ -4,13 +4,24 @@ crypto = require 'crypto'
 mailer = require './mailer.js'
 moment = require 'moment'
 
+_db = ""
 dbConfig = 
   "dbuser"     : ""
   "dbpassword" : ""
+  "dburi"      : ""
 
-exports.setDbConfig = (dbuser, dbpassword) ->
+exports.setDbConfig = (dbuser, dbpassword, dburi) ->
   dbConfig.dbuser = dbuser
   dbConfig.dbpassword = dbpassword  
+  dbConfig.dburi = "#{dburi}"
+
+  console.log "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase"
+  console.log dbConfig.dburi
+  mongoClient.connect dbConfig.dburi, (err, db) ->
+    if !err
+      _db = db
+    return
+  
   return
 
 host= ""
@@ -20,12 +31,12 @@ exports.setHost = (hostName) ->
   console.log "host set", host
   return
 
-_db = ""
 
-mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+###
+mongoClient.connect dbConfig.dburi, (err, db) ->
   if !err
     _db = db
-
+###
 
 
 exports.checkIfEmailAlreadyRegistered = (email, callback) ->
@@ -33,7 +44,7 @@ exports.checkIfEmailAlreadyRegistered = (email, callback) ->
   if _db
     checkingIfEmailAlreadyRegistered email, _db, callback
   else
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
        callback
          "err"    : err
@@ -69,7 +80,7 @@ exports.addNewUser = (requestingUser, callback) ->
   if _db
     addingNewUser requestingUser, _db, callback
   else 
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback
           "err"    : err
@@ -136,7 +147,7 @@ exports.authenticateUserCredentials  = (email, password, callback) ->
   if _db
     authenticatingUserCredentials email, password, _db, callback
   else
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback
           "err": err
@@ -215,7 +226,7 @@ exports.addSeriesToSubscribedTvShows = (subscribingTvSeries, callback) ->
   if _db
     addingSeriesToSubscribedTvShows subscribingTvSeries, _db, callback
   else
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback
           "err"    : err
@@ -255,7 +266,7 @@ exports.getSubscribedTvShows = (username, callback) ->
   if _db
     gettingSubscribedTvShows username, _db, callback
   else 
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback 
           "err"    : err
@@ -290,7 +301,7 @@ exports.getSubscriptionStatusForSeriesWidth = (id, username, callback) ->
   if _db
     gettingSubscriptionStatusForSeriesWidth id, username, _db, callback
   else 
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback 
           "err"    : err
@@ -328,7 +339,7 @@ exports.getTvShowsAiringOn = (dayOfWeek, callback) ->
   if _db
     gettingSubscribedTvShows dayOfWeek, _db, callback
   else 
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback 
           "err"    : err
@@ -366,7 +377,7 @@ exports.deleteAccount = (username, callback) ->
   if _db
     deletingAccount username, _db, callback
   else 
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback 
           "err"    : err
@@ -413,7 +424,7 @@ exports.storePasswordChangeRequest = (passwordResetObject, callback) ->
   if _db
     storingPasswordChangeRequest passwordResetObject, _db, callback
   else 
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback 
           "err"    : err
@@ -450,7 +461,7 @@ exports.updatePassword = (token, newPassword, callback) ->
   if _db
     updatingPassword token, newPassword, _db, callback
   else 
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback 
           "err"    : err
@@ -511,7 +522,7 @@ exports.addUnauthenticatedUser = (unauthenticatedUserObject, callback) ->
   if _db
     addingUnauthenticatedUser unauthenticatedUserObject, _db, callback
   else 
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback 
           "err"    : err
@@ -568,7 +579,7 @@ exports.authenticateAccount = (token, callback) ->
   if _db
     authenticatingAccount token, _db, callback
   else 
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback 
           "err"    : err
@@ -858,7 +869,7 @@ createMongodbConnectionAndPerform = (job, options, callback) ->
   if _db
     job options, _db, callback
   else
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback
           "err"    : err
@@ -880,7 +891,7 @@ connectToMongodbAndPerform = (job, options, callback) ->
     options.collection = _db.collection options.collection
     job options, callback
   else
-    mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+    mongoClient.connect dbConfig.dburi, (err, db) ->
       if err
         callback
           "err"    : err

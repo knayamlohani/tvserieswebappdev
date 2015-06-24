@@ -28,7 +28,7 @@
 
   app.set('port', process.env.PORT);
 
-  app.set('tvdbApiKey', process.env.TVDB_API_KEY);
+  app.set('tvdbApiKey', process.env["tvdbapikey"]);
 
   app.set('emailusername', process.env.emailusername);
 
@@ -51,9 +51,11 @@
     "password": app.get('emailpassword')
   });
 
+  console.log(process.env["databaseuri"]);
+
   mongodbclient = require('./mongodbclient.js');
 
-  mongodbclient.setDbConfig(process.env["DB_USER"], process.env["DB_PASSWORD"]);
+  mongodbclient.setDbConfig(process.env["dbuser"], process.env["dbpassword"], process.env["databaseuri"]);
 
   cookieParser = require('cookie-parser');
 
@@ -909,6 +911,8 @@
     hashValue = shasum.digest('hex');
     return hashValue;
   };
+
+  jobs.performJobs();
 
 }).call(this);
 

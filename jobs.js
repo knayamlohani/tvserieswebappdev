@@ -277,17 +277,17 @@
           _ref = result.data;
           _fn = function(tvShow) {
             if (!today) {
-              today = moment.utc().format('DD-MM-YYYY');
+              today = moment.utc();
             }
             options = {
-              "url": "https://" + host + "/seriesWithId=" + tvShow.id + "/episodeWithAirDate=" + today
+              "url": "https://" + host + "/seriesWithId=" + tvShow.id + "/episodeWithAirDate=" + (today.format('DD-MM-YYYY'))
             };
             request(options.url, function(error, response, body) {
               var episode, user, usersCount, _j, _len1;
               counter++;
               episode = JSON.parse(body);
               console.log("request", episode.number, " ", episode.name);
-              if (moment.utc(episode.airDate).format('DD-MM-YYYY') === today) {
+              if (moment.utc(episode.airDate).format('DD-MM-YYYY') === today.format('DD-MM-YYYY')) {
                 console.log("request", episode);
                 subscribers[tvShow.subscribersUsername].tvShows.push({
                   "name": tvShow.name,
@@ -306,7 +306,8 @@
                     "name": subscribers[user].name,
                     "username": subscribers[user].username,
                     "tvShows": subscribers[user].tvShows,
-                    "airDay": getDaysNameFor(today.day())
+                    "airDay": getDaysNameFor(today.day()),
+                    "noTvShows": subscribers[user].tvShows.length === 0 ? true : false
                   });
                 }
                 console.log("airing today", JSON.stringify(temp, null, 4));

@@ -12,14 +12,25 @@
 
   moment = require('moment');
 
+  _db = "";
+
   dbConfig = {
     "dbuser": "",
-    "dbpassword": ""
+    "dbpassword": "",
+    "dburi": ""
   };
 
-  exports.setDbConfig = function(dbuser, dbpassword) {
+  exports.setDbConfig = function(dbuser, dbpassword, dburi) {
     dbConfig.dbuser = dbuser;
     dbConfig.dbpassword = dbpassword;
+    dbConfig.dburi = "" + dburi;
+    console.log("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase");
+    console.log(dbConfig.dburi);
+    mongoClient.connect(dbConfig.dburi, function(err, db) {
+      if (!err) {
+        _db = db;
+      }
+    });
   };
 
   host = "";
@@ -29,19 +40,18 @@
     console.log("host set", host);
   };
 
-  _db = "";
 
-  mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
-    if (!err) {
-      return _db = db;
-    }
-  });
+  /*
+  mongoClient.connect dbConfig.dburi, (err, db) ->
+    if !err
+      _db = db
+   */
 
   exports.checkIfEmailAlreadyRegistered = function(email, callback) {
     if (_db) {
       checkingIfEmailAlreadyRegistered(email, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -83,7 +93,7 @@
     if (_db) {
       addingNewUser(requestingUser, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -152,7 +162,7 @@
     if (_db) {
       authenticatingUserCredentials(email, password, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -226,7 +236,7 @@
     if (_db) {
       addingSeriesToSubscribedTvShows(subscribingTvSeries, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -264,7 +274,7 @@
     if (_db) {
       gettingSubscribedTvShows(username, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -304,7 +314,7 @@
     if (_db) {
       gettingSubscriptionStatusForSeriesWidth(id, username, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -351,7 +361,7 @@
     if _db
       gettingSubscribedTvShows dayOfWeek, _db, callback
     else 
-      mongoClient.connect "mongodb://#{dbConfig.dbuser}:#{dbConfig.dbpassword}@ds029640.mongolab.com:29640/tvserieswebappdatabase", (err, db) ->
+      mongoClient.connect dbConfig.dburi, (err, db) ->
         if err
           callback 
             "err"    : err
@@ -391,7 +401,7 @@
     if (_db) {
       deletingAccount(username, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -446,7 +456,7 @@
     if (_db) {
       storingPasswordChangeRequest(passwordResetObject, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -483,7 +493,7 @@
     if (_db) {
       updatingPassword(token, newPassword, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -547,7 +557,7 @@
     if (_db) {
       addingUnauthenticatedUser(unauthenticatedUserObject, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -605,7 +615,7 @@
     if (_db) {
       authenticatingAccount(token, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -874,7 +884,7 @@
     if (_db) {
       job(options, _db, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,
@@ -899,7 +909,7 @@
       options.collection = _db.collection(options.collection);
       job(options, callback);
     } else {
-      mongoClient.connect("mongodb://" + dbConfig.dbuser + ":" + dbConfig.dbpassword + "@ds029640.mongolab.com:29640/tvserieswebappdatabase", function(err, db) {
+      mongoClient.connect(dbConfig.dburi, function(err, db) {
         if (err) {
           callback({
             "err": err,

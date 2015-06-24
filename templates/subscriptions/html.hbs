@@ -26,16 +26,16 @@
       </div>
       <div id="body">
 
-        {{#each tvShows}}
-          <div class="series">
-            <img class="artwork" src="{{artworkUrl}}"/>
-            <h3 class="tag">{{name}}</h3>
-            <h3 class="episode-name">{{episodeName}}</h3>
-          </div>
-        {{/each}}
-
-        {{#if !tvShows}}
-          <h2 id="no-tvshows">No Episodes for Today</h3>
+        {{#if tvShows}}
+          {{#each tvShows}}
+            <div class="series">
+              <img class="artwork" src="{{artworkUrl}}"/>
+              <h3 class="tag">{{name}}</h3>
+              <h3 class="episode-name">{{episodeName}}</h3>
+            </div>
+          {{/each}}
+        {{else}}
+          <h2 id="no-tvshows">No Episodes for Today</h2>
         {{/if}}
         
       </div>
