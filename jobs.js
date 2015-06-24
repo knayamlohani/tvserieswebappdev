@@ -265,28 +265,35 @@
       };
       console.log("mailing subscriptions");
       mongodbclient.getTvShowsAiringOn(options, function(result) {
-        var allUsers, counter, episodesAiringForSeriesWithIdToday, subscribers, temp, tvShow, tvShowsCount, _fn, _i, _len, _ref;
+        var allUsers, counter, episodesAiringForSeriesWithIdToday, subscribers, temp, today, tvShow, tvShowsCount, _fn, _i, _len, _ref;
         if (!result.err) {
           subscribers = {};
           allUsers = [];
           temp = [];
+          today = null;
           episodesAiringForSeriesWithIdToday = [];
           tvShowsCount = result.data.length;
           counter = 0;
           _ref = result.data;
           _fn = function(tvShow) {
+            if (!today) {
+              today = moment.utc().format('DD-MM-YYYY');
+            }
+            options = {
+              "url": "https://" + host + "/seriesWithId=" + tvShow.id + "/episodeWithAirDate=" + today
+            };
             request(options.url, function(error, response, body) {
               var episode, user, usersCount, _j, _len1;
               counter++;
               episode = JSON.parse(body);
               console.log("request", episode.number, " ", episode.name);
-              if (moment.utc(episode.airDate).format('DD-MM-YYYY') === moment.utc().format('DD-MM-YYYY')) {
+              if (moment.utc(episode.airDate).format('DD-MM-YYYY') === today) {
                 console.log("request", episode);
                 subscribers[tvShow.subscribersUsername].tvShows.push({
                   "name": tvShow.name,
                   "id": tvShow.id,
                   "artworkUrl": tvShow.artworkUrl,
-                  "episodeName": "S" + (episode.season < 10 ? 0 : "") + episode.season + "E" + (episode.number < 10 ? 0 : "") + episode.number + " " + episode.name
+                  "episodeName": "S" + (episode.season < 10 ? 0 : '') + episode.season + "E" + (episode.number < 10 ? 0 : '') + episode.number + " " + episode.name
                 });
               }
               if (counter === tvShowsCount) {
@@ -298,10 +305,11 @@
                     "email": subscribers[user].email,
                     "name": subscribers[user].name,
                     "username": subscribers[user].username,
-                    "tvShows": subscribers[user].tvShows
+                    "tvShows": subscribers[user].tvShows,
+                    "airDay": getDaysNameFor(today.day())
                   });
                 }
-                console.log("todays airing", JSON.stringify(temp, null, 4));
+                console.log("airing today", JSON.stringify(temp, null, 4));
                 mailer.mailSubscriptions(temp, callback);
               }
             });
@@ -316,9 +324,6 @@
               subscribers[tvShow.subscribersUsername].name = tvShow.subscribersFirstName + " " + tvShow.subscribersLastName;
               allUsers.push(tvShow.subscribersUsername);
             }
-            options = {
-              "url": "https://" + host + "/seriesWithId=" + tvShow.id + "/episodeWithAirDate=" + (moment.utc().format('DD-MM-YYYY'))
-            };
             _fn(tvShow);
 
             /*

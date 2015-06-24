@@ -326,6 +326,7 @@ exports.performJobs = ->
         subscribers = {}
         allUsers = []
         temp = []
+        today = null
 
         episodesAiringForSeriesWithIdToday = []
         tvShowsCount = result.data.length
@@ -342,26 +343,35 @@ exports.performJobs = ->
             allUsers.push tvShow.subscribersUsername
 
 
-          #checking if the tvshow actually airs today
-          options = 
-            "url" : "https://#{host}/seriesWithId=#{tvShow.id}/episodeWithAirDate=#{moment.utc().format('DD-MM-YYYY')}"
+          
 
           
           #options.url = "https://#{host}/seriesWithId=#{tvShow.id}/episodeWithAirDate=#{moment.utc().format('DD-MM-YYYY')}"
           #console.log "options", options
           ((tvShow) ->
+            #checking if the tvshow actually airs today
+            if !today
+              today = moment.utc().format('DD-MM-YYYY')
+
+            options = 
+              "url" : "https://#{host}/seriesWithId=#{tvShow.id}/episodeWithAirDate=#{today}"
+            
             request options.url, (error, response, body) ->
               counter++
               episode = JSON.parse body
               console.log "request", episode.number, " ", episode.name
-              if moment.utc(episode.airDate).format('DD-MM-YYYY') == moment.utc().format('DD-MM-YYYY')
+
+              
+
+              if moment.utc(episode.airDate).format('DD-MM-YYYY') == today
                 console.log "request", episode
                 subscribers[tvShow.subscribersUsername].tvShows.push 
                   "name"        : tvShow.name
                   "id"          : tvShow.id
                   "artworkUrl"  : tvShow.artworkUrl
-                  "episodeName" : "S#{if episode.season < 10 then 0 else ""}#{episode.season}E#{if episode.number < 10 then 0 else ""}#{episode.number} #{episode.name}"
-              
+                  "episodeName" : "S#{if episode.season < 10 then 0 else ''}#{episode.season}E#{if episode.number < 10 then 0 else ''}#{episode.number} #{episode.name}"
+                  
+
               if counter == tvShowsCount
                 console.log "subscribers today -\n", JSON.stringify subscribers, null, 4
                 usersCount = allUsers.length
@@ -372,8 +382,9 @@ exports.performJobs = ->
                     "name"     : subscribers[user].name
                     "username" : subscribers[user].username
                     "tvShows"  : subscribers[user].tvShows
+                    "airDay"   : getDaysNameFor today.day()
 
-                console.log "todays airing", JSON.stringify temp, null, 4
+                console.log "airing today", JSON.stringify temp, null, 4
                 mailer.mailSubscriptions temp, callback
               return
             return
