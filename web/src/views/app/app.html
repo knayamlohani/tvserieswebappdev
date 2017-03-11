@@ -5,6 +5,7 @@
     <base href="/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <!--<link rel="stylesheet" href="styles.css">-->
 
     <!-- Polyfill(s) for older browsers -->
@@ -20,6 +21,13 @@
 </head>
 
 <body>
-<my-app>Get your application ready ...</my-app>
+<main-component>
+    <div class="component-loading-info">
+        <div class="message"><span>loading tv series ...</span></div>
+        <div class="progress-indicator">
+            <span><i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i></span>
+        </div>
+    </div>
+</main-component>
 </body>
 </html>
