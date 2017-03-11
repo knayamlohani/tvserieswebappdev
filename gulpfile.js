@@ -47,6 +47,7 @@ gulp.task('compile-coffee-to-js:server', function(){
     gulp
         .src (gulpConfig.server.compileCoffeeToJS.src)
         .pipe(gulpCoffee({bare: true}))
+        .pipe(gulpUglify())
         .pipe(gulp.dest(gulpConfig.server.compileCoffeeToJS.dest));
 });
 
@@ -91,6 +92,13 @@ gulp.task('copy-views:web', function(){
         .pipe(gulp.dest(gulpConfig.web.copyViews.dest));
 });
 
+// copies images from src to build in web directory
+gulp.task('copy-images:web', function(){
+    gulp
+        .src (gulpConfig.web.copyImages.src)
+        .pipe(gulp.dest(gulpConfig.web.copyImages.dest));
+});
+
 // compiles sass to css from src to build in web directory
 gulp.task('compile-sass-to-css:web', function () {
     return gulp
@@ -107,7 +115,7 @@ gulp.task('compile-ts-to-js:web', function() {
     return gulp
         .src(gulpConfig.web.compileTSToJS.src)
         .pipe(gulpTypescript(tsConfig))
-        // .pipe(gulpUglify())
+        .pipe(gulpUglify())
         // .pipe(rename({ extname: '.min.js' }))
         .pipe(gulp.dest(gulpConfig.web.compileTSToJS.dest));
 });
@@ -119,10 +127,17 @@ gulp.task('copy-js:web', function() {
         .pipe(gulp.dest(gulpConfig.web.copyJS.dest));
 });
 
+gulp.task('copy-static-views:web', function() {
+    gulp
+        .src (gulpConfig.web.copyStaticViews.src)
+        .pipe(gulp.dest(gulpConfig.web.copyStaticViews.dest));
+});
+
 // watches changes in web directory files and triggers corresponding tasks
 gulp.task('web:watch', function () {
     gulp.watch(gulpConfig.web.copyViews.src,        ['copy-views:web']);
-    gulp.watch(gulpConfig.web.copyJS.src,          ['copy-js:web']);
+    gulp.watch(gulpConfig.web.copyJS.src,           ['copy-js:web']);
+    gulp.watch(gulpConfig.web.copyStaticViews.src,  ['copy-static-views:web']);
     gulp.watch(gulpConfig.web.compileSassToCss.src, ['compile-sass-to-css:web']);
     gulp.watch(gulpConfig.web.compileTSToJS.src,    ['compile-ts-to-js:web']   );
 });
@@ -131,6 +146,8 @@ gulp.task('web:watch', function () {
 gulp.task('startup:web', [
         'clean:web',
         'copy-views:web',
+        'copy-images:web',
+        'copy-static-views:web',
         'copy-js:web',
         'compile-sass-to-css:web',
         'compile-ts-to-js:web',

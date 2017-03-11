@@ -18,11 +18,19 @@ var gulpConfig = {
     },
     'web': {
         'copyViews': {
-            'src' : path.join(__dirname, '/../../web/src/**/*.html'),
-            'dest': path.join(__dirname, '/../../web/build/')
+            'src' : path.join(__dirname, '/../../web/src/views/**/*.html'),
+            'dest': path.join(__dirname, '/../../web/build/views/')
+        },
+        'copyStaticViews': {
+            'src' : path.join(__dirname, '/../../web/src/static/views/**/*.html'),
+            'dest': path.join(__dirname, '/../../web/build/static/views')
+        },
+        'copyImages': {
+            'src' : path.join(__dirname, '/../../web/src/static/images/**/*.*'),
+            'dest': path.join(__dirname, '/../../web/build/static/images/')
         },
         'copyJS': {
-            'src' : path.join(__dirname, '/../../web/src/scripts/**/*.js'),
+            'src' : path.join(__dirname, '/../../web/src/static/scripts/**/*.js'),
             'dest': path.join(__dirname, '/../../web/build/static/scripts')
         },
         'clean': {
@@ -31,12 +39,12 @@ var gulpConfig = {
             ]
         },
         'compileSassToCss': {
-            'src' : path.join(__dirname, '/../../web/src/**/*.sass'),
-            'dest': path.join(__dirname, '/../../web/build/static/')
+            'src' : path.join(__dirname, '/../../web/src/static/styles/**/*.sass'),
+            'dest': path.join(__dirname, '/../../web/build/static/styles/')
         },
         'compileTSToJS': {
-            'src' : path.join(__dirname, '/../../web/src/**/*.ts'),
-            'dest': path.join(__dirname, '/../../web/build/static/')
+            'src' : path.join(__dirname, '/../../web/src/static/scripts/**/*.ts'),
+            'dest': path.join(__dirname, '/../../web/build/static/scripts/')
         }
     }
 
