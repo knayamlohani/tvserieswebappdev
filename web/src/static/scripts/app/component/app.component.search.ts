@@ -5,8 +5,8 @@
 import {Component, OnInit} from "@angular/core";
 import {TVSeriesService} from "../service/app.service.tvseries";
 import {LoggerService} from "../service/app.service.logger";
-import {TVSeries} from "../model/model.tv_series";
-import {Banner} from "../model/model.banner";
+import {TVSeries} from "../model/app.model.tv_series";
+import {Banner} from "../model/app.model.banner";
 import {Router} from "@angular/router";
 import {DataService} from "../service/app.service.data";
 import {Location} from "@angular/common";

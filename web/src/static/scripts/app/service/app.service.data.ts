@@ -2,7 +2,7 @@
  * Created by mayanklohani on 09/03/17.
  */
 
-import {TVSeries} from "../model/model.tv_series";
+import {TVSeries} from "../model/app.model.tv_series";
 import {Injectable} from "@angular/core";
 
 

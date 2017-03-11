@@ -12,6 +12,8 @@ import {LoggerService} from "../service/app.service.logger";
 import {Routes, RouterModule} from "@angular/router";
 import {TVSeriesComponent} from "../component/app.component.tv_series";
 import {DataService} from "../service/app.service.data";
+import {SeasonComponent} from "../component/app.component.season";
+import {EpisodeComponent} from "../component/app.component.episode";
 
 
 const routes: Routes  = [
@@ -33,10 +35,16 @@ const routes: Routes  = [
 
 
 @NgModule({
-  imports:      [ BrowserModule, RouterModule.forRoot(routes), HttpModule, FormsModule ],
-  declarations: [ MainComponent, AppHeaderComponent, SearchComponent, TVSeriesComponent ],
+  imports:      [
+    BrowserModule, RouterModule.forRoot(routes), HttpModule, FormsModule
+  ],
+  declarations: [
+    MainComponent, AppHeaderComponent, SearchComponent, TVSeriesComponent, SeasonComponent, EpisodeComponent
+  ],
   bootstrap:    [ MainComponent ],
-  providers:    [ LoggerService ,HttpService, DataService,TVSeriesService, Location ]
+  providers:    [
+    LoggerService ,HttpService, DataService,TVSeriesService, Location
+  ]
 
 })
 export class AppModule { }

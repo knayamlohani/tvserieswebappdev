@@ -3,7 +3,7 @@
  */
 
 import {Component, OnInit} from "@angular/core";
-import {TVSeries} from "../model/model.tv_series";
+import {TVSeries} from "../model/app.model.tv_series";
 import {TVSeriesService} from "../service/app.service.tvseries";
 import {DataService} from "../service/app.service.data";
 import {LoggerService} from "../service/app.service.logger";
