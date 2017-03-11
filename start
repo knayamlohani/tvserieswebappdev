@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-nodemon --exec "foreman start --procfile Procfile.dev -p 0" -e "js html" -w .
