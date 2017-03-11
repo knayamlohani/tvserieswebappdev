@@ -3,6 +3,6 @@ router  = express.Router();
 
 
 router.get '/', (req, res, next) ->
-  res.render 'app/app', {title: 'chipkali 1'}
+  res.render 'app/app', {title: 'TV Series'}
 
 module.exports = router

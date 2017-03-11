@@ -43,13 +43,14 @@ app.use express.static(path.join(__dirname, '/../../node_modules'))
 
 #route mounts
 app.use '/', viewRoutes
-app.use '/serviceRoutes', serviceRoutes
+app.use '/service', serviceRoutes
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
-  err = new Error 'Not Found'
-  err.status = 404;
-  next err
+  res.redirect '/'
+#  err = new Error 'Not Found'
+#  err.status = 404;
+#  next err
   return
 
 
