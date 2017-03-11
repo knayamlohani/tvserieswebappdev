@@ -1,0 +1,35 @@
+<div class="tv-series-component-body">
+    <div class="wrapper">
+        <div class="tv-series-name-options">
+            <div class="exit-tv-series-component action tv-series-option"
+                 (click)="exitTVSeriesComponent()">
+                <i class="fa fa-angle-left" aria-hidden="true"></i>
+            </div>
+            <div class="tv-series-name">{{tvSeries.name}}</div>
+            <div class="load-search-component action tv-series-option"
+                 (click)="loadSearchComponent()">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="tv-series-artwork-info-seasons">
+            <div class="tv-series-artwork-info">
+                <div class="tv-series-artwork">
+                    <img [src]="tvSeries.artwork" class="image vertical">
+                    <img [src]="tvSeries.banner" class="image horizontal">
+                </div>
+                <div class="tv-series-info">
+                    <div class="tv-series-cast">
+                        <div class="sub-title">Cast</div>
+                        <div class="tv-series-cast-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tv-series-seasons">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="tv-series-component-blur-layer blur-layer" [ngStyle]="{ backgroundImage: 'url(' + tvSeries.banner + ')' }"></div>
