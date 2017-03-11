@@ -1,5 +1,5 @@
-import {Banner} from "./model.banner";
-import {Season} from "./model.season";
+import {Banner} from "./app.model.banner";
+import {Season} from "./app.model.season";
 /**
  * Created by mayanklohani on 08/03/17.
  */

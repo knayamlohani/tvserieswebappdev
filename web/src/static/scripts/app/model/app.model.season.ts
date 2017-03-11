@@ -2,12 +2,11 @@
  * Created by mayanklohani on 10/03/17.
  */
 
-import {Episode} from "./model.episode";
+import {Episode} from "./app.model.episode";
 
 export class Season {
   private _number: string;
-  private _episodes: Episode [] = [] as Array<Episode>
-
+  private _episodes: Episode [] = [] as Array<Episode>;
 
   constructor() {
   }
@@ -28,4 +27,5 @@ export class Season {
   set episodes(value: Episode[]) {
     this._episodes = value;
   }
+
 }
