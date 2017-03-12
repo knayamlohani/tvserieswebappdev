@@ -35,6 +35,7 @@ export class Episode {
   private _seriesId: string;
   private _thumbnailAdded: string;
   private _thumbnailResultion: string;
+  private _isActivated: boolean = false;
 
 
   constructor() {
@@ -286,5 +287,14 @@ export class Episode {
 
   set thumbnailResultion(value: string) {
     this._thumbnailResultion = value;
+  }
+
+
+  get isActivated(): boolean {
+    return this._isActivated;
+  }
+
+  set isActivated(value: boolean) {
+    this._isActivated = value;
   }
 }

@@ -1,1 +1,15 @@
 .season-component-body
+  .season-title
+    padding: 1rem 0
+
+
+  .episodes
+    display: flex
+    flex-flow: row wrap
+    .first-half-episodes, .second-half-episodes
+      width: 50%
+
+
+    @media all and (max-width: 1000px)
+      .first-half-episodes, .second-half-episodes
+        width: 100%

@@ -1,12 +1,12 @@
-<div class="episode-component-body">
-    <div class="episode-title-air-date">
+<div class="episode-component-body action" (click)="toggleIsActivatedStatus()">
+    <div class="episode-title-air-date" [ngClass]="{'active': episode.isActivated}">
         <div class="episode-title">
-            <span class="episode-no"></span>
-            <span class="episode-name"></span>
+            <div class="episode-no">{{episode.number}}</div>
+            <div class="episode-name">{{episode.name}}</div>
         </div>
-        <div class="episode-air-date"></div>
+        <div class="episode-air-date">{{episode.airDate}}</div>
     </div>
-    <div class="episode-overview">
-
+    <div class="episode-overview" [ngClass]="{'hidden': !episode.isActivated}" (click)="$event.stopPropagation()">
+        {{episode.overview || 'Overview not available ...'}}
     </div>
 </div>

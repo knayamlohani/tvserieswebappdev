@@ -14,6 +14,7 @@ import {TVSeriesComponent} from "../component/app.component.tv_series";
 import {DataService} from "../service/app.service.data";
 import {SeasonComponent} from "../component/app.component.season";
 import {EpisodeComponent} from "../component/app.component.episode";
+import {SeasonService} from "../service/app.service.season";
 
 
 const routes: Routes  = [
@@ -43,7 +44,7 @@ const routes: Routes  = [
   ],
   bootstrap:    [ MainComponent ],
   providers:    [
-    LoggerService ,HttpService, DataService,TVSeriesService, Location
+    LoggerService ,HttpService, DataService,TVSeriesService, Location, SeasonService
   ]
 
 })

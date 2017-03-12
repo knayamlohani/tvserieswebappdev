@@ -1,14 +1,19 @@
 <div class="season-component-body">
-    <div class="season-title">
+    <div class="season-title sub-title">
         <span class="">Season</span>
         <span class="season-no">{{season.number}}</span>
+        <span class="extras" [hidden]="season.number > 0"> (extras)</span>
     </div>
     <div class="episodes">
         <div class="first-half-episodes">
-            <div class="episode" *ngFor="let episode of season.episodes.splice(0, season.episodes.length/2 - 1)"></div>
+            <episode-component class="episode" *ngFor="let episode of firstHalfEpisodes"
+                               [seasonEpisode]="episode"
+                                (onEpisodeActivated)="onEpisodeActivated($event)"></episode-component>
         </div>
-        <div class="second-half-episode">
-            <div class="episode" *ngFor="let episode of season.episodes.splice(season.episodes.length/2 , season.episodes.length - 1)"></div>
+        <div class="second-half-episodes">
+            <episode-component class="episode" *ngFor="let episode of secondHalfEpisodes"
+                               [seasonEpisode]="episode"
+                               (onEpisodeActivated)="onEpisodeActivated($event)"></episode-component>
         </div>
     </div>
 </div>

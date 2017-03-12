@@ -26,7 +26,7 @@
             </div>
 
             <div class="tv-series-seasons">
-                <div class="season" *ngFor="let season of tvSeries.seasons"></div>
+                <season-component class="season" *ngFor="let season of tvSeries.seasons" [seriesSeason]="season"></season-component>
             </div>
         </div>
     </div>
