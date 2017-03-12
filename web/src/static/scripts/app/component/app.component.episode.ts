@@ -2,24 +2,26 @@
  * Created by mayanklohani on 11/03/17.
  */
 
-import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
+import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from "@angular/core";
 import {Episode} from "../model/app.model.episode";
 import {LoggerService} from "../service/app.service.logger";
 import {SeasonService} from "../service/app.service.season";
+import {Subject, Subscription} from "rxjs";
 
 @Component({
   selector   : 'episode-component',
   templateUrl: 'views/app/component/app.component.episode.html',
   styleUrls  : ['styles/app/component/app.component.episode.css']
 })
-export class EpisodeComponent extends OnInit{
+export class EpisodeComponent extends OnInit implements OnDestroy{
   @Input("seasonEpisode") episode: Episode;
   @Output("onEpisodeActivated") onEpisodeActivated = new EventEmitter();
   data: any;
+  confirmToggleEpisodeIsActiveStatus: Subscription;
 
   constructor(private logger: LoggerService, private seasonService: SeasonService) {
     super();
-    seasonService.confirmToggleEpisodeIsActiveStatus.subscribe(
+    this.confirmToggleEpisodeIsActiveStatus = seasonService.confirmToggleEpisodeIsActiveStatus.subscribe(
       dataString => {
         this.data = JSON.parse(dataString);
 
@@ -36,6 +38,11 @@ export class EpisodeComponent extends OnInit{
 
   ngOnInit(): void {
     this.episode.isActivated = false;
+  }
+
+
+  ngOnDestroy(): void {
+    this.confirmToggleEpisodeIsActiveStatus.unsubscribe()
   }
 
   toggleIsActivatedStatus(): void {

@@ -2,11 +2,11 @@
  * Created by mayanklohani on 12/03/17.
  */
 
-import {Injectable} from "@angular/core";
+import {Injectable, OnDestroy} from "@angular/core";
 import {Subject} from "rxjs";
 
 @Injectable()
-export class SeasonService {
+export class SeasonService implements OnDestroy{
   toggleEpisodeIsActiveStatus = new Subject<string>();
   confirmToggleEpisodeIsActiveStatus = new Subject<string>();
 
@@ -18,5 +18,10 @@ export class SeasonService {
         this.confirmToggleEpisodeIsActiveStatus.next(dataString);
       }
     )
+  }
+
+
+  ngOnDestroy(): void {
+    this.toggleEpisodeIsActiveStatus.unsubscribe();
   }
 }
