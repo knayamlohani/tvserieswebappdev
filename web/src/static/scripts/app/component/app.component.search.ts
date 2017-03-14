@@ -51,51 +51,56 @@ export class SearchComponent extends OnInit{
   }
 
   searchTVSeries() {
+    this.searchViewActivatedStatus = true;
+    this.name = this.name.trim();
     this.logger.info(`search tv series: ${this.name}`);
-    this.tvShows = [] as Array<TVSeries>;
-    this.info = "";
-    this.fetchingTVShows = true;
-    this.tvSeriesService
-      .getTVSeriesByName(this.name)
-      .subscribe(
-        (data) => {
-          this.fetchingTVShows = false;
-          this.tvShows = data as Array<TVSeries>;
-          // this.logger.info(this.tvShows);
 
-          if(this.tvShows.length == 0) {
-            this.info = "Unable to find tv shows matching your request"
-          } else {
-            for(var tvShow of this.tvShows) {
-              ((tvShow) => {
-                tvShow.fetchingBanners = true;
-                this.tvSeriesService.getBannersForTVSeriesWithId(tvShow.id).subscribe(
-                  (data)  => {
-                    // this.logger.info(data);
-                    tvShow.banners = data as Array<Banner>;
-                    for(let banner of tvShow.banners) {
-                      if(banner.type == 'poster') {
-                        tvShow.artwork = banner.url;
-                        break;
+    if(this.name) {
+      this.tvShows = [] as Array<TVSeries>;
+      this.info = "";
+      this.fetchingTVShows = true;
+      this.tvSeriesService
+        .getTVSeriesByName(this.name)
+        .subscribe(
+          (data) => {
+            this.fetchingTVShows = false;
+            this.tvShows = data as Array<TVSeries>;
+            // this.logger.info(this.tvShows);
+
+            if (this.tvShows.length == 0) {
+              this.info = "Unable to find tv shows matching your request"
+            } else {
+              for (var tvShow of this.tvShows) {
+                ((tvShow) => {
+                  tvShow.fetchingBanners = true;
+                  this.tvSeriesService.getBannersForTVSeriesWithId(tvShow.id).subscribe(
+                    (data) => {
+                      // this.logger.info(data);
+                      tvShow.banners = data as Array<Banner>;
+                      for (let banner of tvShow.banners) {
+                        if (banner.type == 'poster') {
+                          tvShow.artwork = banner.url;
+                          break;
+                        }
                       }
+                      tvShow.fetchingBanners = false;
+                    },
+                    (error) => {
+                      tvShow.fetchingBanners = false;
                     }
-                    tvShow.fetchingBanners = false;
-                  },
-                  (error) => {
-                    tvShow.fetchingBanners = false;
-                  }
-                )
-              })(tvShow)
+                  )
+                })(tvShow)
+              }
             }
-          }
 
-        },
-        (error) => {
-          this.fetchingTVShows = false;
-          this.logger.error(error);
-          this.info = "Unable to fetch tv shows matching your request due to some unexpected error."
-        }
-      );
+          },
+          (error) => {
+            this.fetchingTVShows = false;
+            this.logger.error(error);
+            this.info = "Unable to fetch tv shows matching your request due to some unexpected error."
+          }
+        );
+    }
   }
 
 

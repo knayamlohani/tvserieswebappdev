@@ -2,9 +2,9 @@
     <div class="episode-title-air-date" [ngClass]="{'active': episode.isActivated}">
         <div class="episode-title">
             <div class="episode-no">{{episode.number}}</div>
-            <div class="episode-name">{{episode.name}}</div>
+            <div class="episode-name">{{episode.name || '-'}}</div>
         </div>
-        <div class="episode-air-date">{{episode.airDate}}</div>
+        <div class="episode-air-date">{{episode.airDate ? (episode.airDate | datePipe: DATE_CONSTANTS.SHORT_DATE) : '-'}}</div>
     </div>
     <div class="episode-overview" [ngClass]="{'hidden': !episode.isActivated}" (click)="$event.stopPropagation()">
         {{episode.overview || 'Overview not available ...'}}

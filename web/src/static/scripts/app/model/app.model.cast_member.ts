@@ -2,7 +2,7 @@
  * Created by mayanklohani on 11/03/17.
  */
 
-export class Cast {
+export class CastMember {
 
   private _id: string;
   private _imageUrl: string;

@@ -1,5 +1,6 @@
 import {Banner} from "./app.model.banner";
 import {Season} from "./app.model.season";
+import {TVSeriesRunningStatus} from "../constant/app.constant.tv_series_constants";
 /**
  * Created by mayanklohani on 08/03/17.
  */
@@ -23,7 +24,7 @@ export class TVSeries {
   private _overview: string;
   private _rating: string;
   private _ratingCount: string;
-  private _runningStatus: string;
+  private _runningStatus: TVSeriesRunningStatus;
   private _added: string;
   private _addedBy: string;
   private _bannerUrl: string;
@@ -170,11 +171,11 @@ export class TVSeries {
     this._ratingCount = value;
   }
 
-  get runningStatus(): string {
+  get runningStatus(): TVSeriesRunningStatus {
     return this._runningStatus;
   }
 
-  set runningStatus(value: string) {
+  set runningStatus(value: TVSeriesRunningStatus) {
     this._runningStatus = value;
   }
 

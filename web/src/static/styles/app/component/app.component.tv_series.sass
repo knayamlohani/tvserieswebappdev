@@ -1,3 +1,5 @@
+$border: .1rem solid rgba(255,255,255,.2)
+
 .tv-series-component-body
   position: fixed
   top: 0
@@ -16,7 +18,7 @@
       left: 0
       width: 100%
       background-color: rgba(0,0,0,.2)
-      border-bottom: .1rem solid rgba(255, 255, 255, 0.1)
+      border-bottom: $border
       font-size: 1.5rem
       //padding: .45rem .5rem
       z-index: 100
@@ -43,7 +45,7 @@
     .tv-series-artwork-info-seasons
       position: relative
       z-index: 50
-      margin-top: 2.95rem
+      margin-top: 2.9rem
       background-color: rgba(0,0,0,.2)
       @media all and (min-width: 1001px)
         .tv-series-artwork-info
@@ -77,8 +79,39 @@
                 margin: 0
 
           .tv-series-info
-            width: 50%
+            //width: 100%
             padding: 3rem
 
       .tv-series-seasons
         padding: 3rem
+
+    .tv-series-info
+      .tv-series-cast
+        //border-bottom: $border
+        .cast-title
+          padding-bottom: .5rem
+          border-bottom: $border
+        .tv-series-cast-members
+          display: flex
+          width: 100%
+          overflow: auto
+
+      .tv-series-quick-info
+        padding: 1rem .25rem .25rem .25rem
+        //padding: .25rem
+        .tv-series-running-info, .tv-series-season-count
+          font-weight: 400
+          padding-top: 1rem
+          //&.tv-series-running-info
+          //font-weight: 100
+          font-size: 1.1rem
+
+        .tv-series-up-next
+
+        .tv-series-overview
+          border-bottom: $border
+          .tv-series-overview-title
+            padding-bottom: .5rem
+            border-bottom: $border
+          .tv-series-overview-content
+            padding: 1rem 0

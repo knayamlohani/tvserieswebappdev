@@ -7,6 +7,7 @@ import {Episode} from "../model/app.model.episode";
 import {LoggerService} from "../service/app.service.logger";
 import {SeasonService} from "../service/app.service.season";
 import {Subject, Subscription} from "rxjs";
+import {DATE_CONSTANTS} from "../constant/app.constant.date_constants";
 
 @Component({
   selector   : 'episode-component',
@@ -18,6 +19,7 @@ export class EpisodeComponent extends OnInit implements OnDestroy{
   @Output("onEpisodeActivated") onEpisodeActivated = new EventEmitter();
   data: any;
   confirmToggleEpisodeIsActiveStatus: Subscription;
+  DATE_CONSTANTS = DATE_CONSTANTS;
 
   constructor(private logger: LoggerService, private seasonService: SeasonService) {
     super();

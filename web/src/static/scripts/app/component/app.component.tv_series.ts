@@ -9,7 +9,8 @@ import {DataService} from "../service/app.service.data";
 import {LoggerService} from "../service/app.service.logger";
 import {Router} from "@angular/router";
 import {Location} from  "@angular/common"
-import {Cast} from "../model/app.model.cast";
+import {CastMember} from "../model/app.model.cast_member";
+import {TVSeriesRunningStatus} from "../constant/app.constant.tv_series_constants"
 
 @Component({
   selector   : 'tv-series',
@@ -20,13 +21,15 @@ import {Cast} from "../model/app.model.cast";
 })
 export class TVSeriesComponent extends OnInit{
   tvSeries: TVSeries;
-  castList: Cast [] = [] as Array<Cast>;
+  castMembers: CastMember [] = [] as Array<CastMember>;
+  TV_SERIES_RUNNING_STATUS:any = TVSeriesRunningStatus;
   extraData:any =  {
     banner: '',
     fetchingBanners: '',
     banners: '',
     artwork: ''
   };
+
 
   constructor(private tvSeriesService: TVSeriesService, private dataService: DataService,
               private logger: LoggerService, private router: Router,
@@ -74,8 +77,8 @@ export class TVSeriesComponent extends OnInit{
     this.tvSeriesService
       .getCastForTVSeriesWithId(id).subscribe(
         (data)  => {
-          this.castList = data as Array<Cast>;
-          this.logger.info(this.castList);
+          this.castMembers = data as Array<CastMember>;
+          this.logger.info(this.castMembers);
         },
         (error) => {}
       )

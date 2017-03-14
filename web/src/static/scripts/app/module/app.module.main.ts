@@ -15,6 +15,8 @@ import {DataService} from "../service/app.service.data";
 import {SeasonComponent} from "../component/app.component.season";
 import {EpisodeComponent} from "../component/app.component.episode";
 import {SeasonService} from "../service/app.service.season";
+import {CastMemberComponent} from "../component/app.component.cast_member";
+import {DatePipe} from "../pipe/pipe.pipe.date_pipe";
 
 
 const routes: Routes  = [
@@ -40,7 +42,9 @@ const routes: Routes  = [
     BrowserModule, RouterModule.forRoot(routes), HttpModule, FormsModule
   ],
   declarations: [
-    MainComponent, AppHeaderComponent, SearchComponent, TVSeriesComponent, SeasonComponent, EpisodeComponent
+    MainComponent, AppHeaderComponent, SearchComponent,
+    TVSeriesComponent, SeasonComponent, EpisodeComponent,
+    CastMemberComponent, DatePipe
   ],
   bootstrap:    [ MainComponent ],
   providers:    [

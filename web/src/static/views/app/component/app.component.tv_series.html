@@ -19,14 +19,42 @@
                 </div>
                 <div class="tv-series-info">
                     <div class="tv-series-cast">
-                        <div class="sub-title">Cast</div>
-                        <div class="tv-series-cast-list"></div>
+                        <div class="sub-title cast-title">Cast</div>
+                        <div class="tv-series-cast-members">
+                            <cast-member-component class="tv-series-cast-member"
+                                                   *ngFor="let castMember of castMembers"
+                                                   [tvSeriesCastMember]="castMember">
+                                Getting Cast ...
+                            </cast-member-component>
+                        </div>
+                    </div>
+                    <div class="tv-series-quick-info">
+                        <div class="tv-series-overview">
+                            <div class="sub-title tv-series-overview-title">Overview</div>
+                            <div class="tv-series-overview-content">
+                                <p>{{tvSeries.overview}}</p>
+                            </div>
+                        </div>
+                        <div class="tv-series-running-info">
+                            <span *ngIf="tvSeries.runningStatus == TV_SERIES_RUNNING_STATUS.CONTINUING">
+                                {{"airs on " + tvSeries.network + " " + tvSeries.airsOnDayOfWeek + "\'s at " + tvSeries.airsAtTime | lowercase}}
+                            </span>
+                            <span *ngIf="tvSeries.runningStatus == TV_SERIES_RUNNING_STATUS.ENDED">
+                                {{"Series ended after " + tvSeries.seasons?.length + " seasons"}}
+                            </span>
+                        </div>
+                        <div class="tv-series-season-count" *ngIf="tvSeries.runningStatus == TV_SERIES_RUNNING_STATUS.CONTINUING">
+                            {{tvSeries.seasons?.length}} {{tvSeries.seasons?.length == 1 ? ' season': ' seasons'}}
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="tv-series-seasons">
-                <season-component class="season" *ngFor="let season of tvSeries.seasons" [seriesSeason]="season"></season-component>
+                <season-component class="season"
+                                  *ngFor="let season of tvSeries.seasons"
+                                  [seriesSeason]="season">
+                </season-component>
             </div>
         </div>
     </div>
