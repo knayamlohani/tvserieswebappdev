@@ -1,0 +1,1 @@
+var express,router;express=require("express"),router=express.Router(),router.get("/",function(e,r,t){return r.render("app/app",{title:"TV Series"})}),module.exports=router;

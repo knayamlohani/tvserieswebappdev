@@ -1,0 +1,43 @@
+<div class="search-component-body" [ngClass]="searchViewActivatedStatus ? 'view-active': 'view-in-active'">
+    <div class="search-input-response-wrapper">
+        <div class="search-tv-series-form-container">
+            <form class="search-tv-series-form" (submit)="searchTVSeries()">
+                <div class="exit-search-component action search-tv-series-option"
+                     [hidden]="!searchViewActivatedStatus" (click)="exitSearchComponent()">
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                </div>
+                <input class="search-input" type="text" [(ngModel)]="name" name="name"
+                       placeholder="search your favorite tv shows"
+                       (focus)="activateSearchView()" autocomplete="off"/>
+                <div class="search-tv-series action search-tv-series-option" (click)="searchTVSeries()">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </div>
+            </form>
+        </div>
+
+        <div class="tv-shows-wrapper">
+            <div class="info-message">{{info}}</div>
+            <div class="searching-tv-show" [ngClass]="{hidden: !fetchingTVShows}">
+                <div class="searching-tv-show-body">
+                    <div>searching ...</div>
+                    <div class="progress-indicator">
+                        <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="tv-shows" [hidden]="tvShows.length == 0">
+                <div class="tv-show link" *ngFor="let tvShow of tvShows" (click)="loadTVSeries(tvShow)">
+                    <img [src]="tvShow.artwork" class="tv-show-artwork" >
+                    <div class="progress-indicator fetching-banner" [hidden]="!tvShow.fetchingBanners">
+                        <span><i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i></span>
+                    </div>
+                    <div class="tv-show-name">{{tvShow.name}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="search-component-blur-layer blur-layer" [hidden]="!searchViewActivatedStatus">
+</div>
