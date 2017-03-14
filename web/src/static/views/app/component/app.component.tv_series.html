@@ -32,7 +32,7 @@
                         <div class="tv-series-overview">
                             <div class="sub-title tv-series-overview-title">Overview</div>
                             <div class="tv-series-overview-content">
-                                <p>{{tvSeries.overview}}</p>
+                                <p>{{tvSeries.overview || 'overview not available ...'}}</p>
                             </div>
                         </div>
                         <div class="tv-series-running-info">
@@ -40,7 +40,7 @@
                                 {{"airs on " + tvSeries.network + " " + tvSeries.airsOnDayOfWeek + "\'s at " + tvSeries.airsAtTime | lowercase}}
                             </span>
                             <span *ngIf="tvSeries.runningStatus == TV_SERIES_RUNNING_STATUS.ENDED">
-                                {{"Series ended after " + tvSeries.seasons?.length + " seasons"}}
+                                {{tvSeries.name +" ended after " + tvSeries.seasons?.length + " seasons" | lowercase}}
                             </span>
                         </div>
                         <div class="tv-series-season-count" *ngIf="tvSeries.runningStatus == TV_SERIES_RUNNING_STATUS.CONTINUING">
