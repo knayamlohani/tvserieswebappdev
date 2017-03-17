@@ -20,7 +20,7 @@ hbs.registerHelper 'raw', (options)  ->
 
 
 # view engine setup
-app.set 'views', path.join __dirname, '/../../web/build/views'
+app.set 'views', path.join __dirname, '/../../web/build/static'
 app.set 'view engine', 'html'
 app.engine 'html', hbs.__express
 

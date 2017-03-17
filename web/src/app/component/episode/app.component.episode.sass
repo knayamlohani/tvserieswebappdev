@@ -1,0 +1,32 @@
+.episode-component-body
+  margin: .1rem
+  margin-left: 0
+  .episode-title-air-date
+    display: flex
+    flex-flow: row nowrap
+    justify-content: space-between
+
+    border-radius: .25rem
+    padding: .25rem 1rem
+
+    &:hover
+      background-color: rgba(255,255,255,.2)
+
+    &.active
+      background-color: rgba(255,255,255,.2)
+
+    .episode-title
+      display: flex
+      flex-flow: row nowrap
+
+      .episode-no
+        text-align: right
+        width: 1.4rem
+
+      .episode-name
+        padding: 0 1rem
+
+  .episode-overview
+    padding: 1rem
+    padding-left: 3.5rem
+    cursor: auto
