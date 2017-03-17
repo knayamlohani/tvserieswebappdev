@@ -42,7 +42,7 @@ module.exports = {
         // loaders: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'sass-loader?sourceMap' })
         exclude: /node_modules/,
         // loaders: ['raw-loader', 'sass-loader']
-        loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
+        loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader' ])
       }
       // ,
       // {
