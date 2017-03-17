@@ -41,7 +41,8 @@ module.exports = {
         // include: helpers.root('src', 'app'),
         // loaders: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'sass-loader?sourceMap' })
         exclude: /node_modules/,
-        loaders: ['raw-loader', 'sass-loader']
+        // loaders: ['raw-loader', 'sass-loader']
+        loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
       }
       // ,
       // {
@@ -70,7 +71,10 @@ module.exports = {
       name: ['app', 'vendor', 'polyfills']
     }),
 
-    new ExtractTextPlugin("app.css"),
+    new ExtractTextPlugin({ // define where to save the file
+      filename: 'app.css',
+      allChunks: true
+    }),
 
     new HtmlWebpackPlugin({
       template: 'web/src/views/app/app.html'

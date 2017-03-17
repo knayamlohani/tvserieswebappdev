@@ -17,9 +17,10 @@ $border: .1rem solid rgba(255,255,255,.2)
       top: 0
       left: 0
       width: 100%
-      background-color: rgba(0, 0, 0, .35)
+      background-color: rgba(0,0,0,.35)
       border-bottom: $border
       font-size: 1.5rem
+      //padding: .45rem .5rem
       z-index: 100
 
       display: flex
@@ -33,116 +34,85 @@ $border: .1rem solid rgba(255,255,255,.2)
           right: 0
           top: .35rem
 
-
         &.exit-tv-series-component
           font-size: 1.5rem
           padding: .5rem 1rem
 
-
-        .tv-series-name
-          padding: .5rem
-
+      .tv-series-name
+        padding: .5rem
 
 
+    .tv-series-artwork-info-seasons
+      position: relative
+      z-index: 50
+      margin-top: 2.9rem
+      background-color: rgba(0,0,0,.35)
+      @media all and (min-width: 1001px)
+        .tv-series-artwork-info
+          display: flex
+          .tv-series-artwork
+            width: 50%
+            .image
+              &.vertical
+                width: 80%
+                margin: 10%
+                margin: 3rem
+                border-radius: .1rem
+              &.horizontal
+                display: none
 
-      .tv-series-artwork-info-seasons
-        position: relative
-        z-index: 50
-        margin-top: 2.9rem
-        background-color: rgba(0, 0, 0, .35)
-        @media all and (min-width: 1001px)
-          .tv-series-artwork-info
-            display: flex
-            .tv-series-artwork
-              width: 50%
-              .image
-                &.vertical
-                  width: 80%
-                  margin: 10%
-                  margin: 3rem
-                  border-radius: .1rem
+          .tv-series-info
+            width: 50%
+            padding: 3rem
 
-                &.horizontal
-                  display: none
+      @media all and (max-width: 1000px)
+        .tv-series-artwork-info
+          display: flex
+          flex-flow: column nowrap
+          .tv-series-artwork
+            width: 100%
+            .image
+              &.vertical
+                display: none
+              &.horizontal
+                width: 100%
+                margin: 0
 
+          .tv-series-info
+            //width: 100%
+            padding: 3rem
 
+      .tv-series-seasons
+        padding: 3rem
 
+    .tv-series-info
+      .tv-series-cast
+        //border-bottom: $border
+        .cast-title
+          padding-bottom: .5rem
+          border-bottom: $border
+        .tv-series-cast-members
+          display: flex
+          width: 100%
+          overflow: auto
 
-            .tv-series-info
-              width: 50%
-              padding: 3rem
+      .tv-series-quick-info
+        padding: 1rem .25rem .25rem .25rem
+        //padding: .25rem
+        .tv-series-running-info, .tv-series-season-count
+          font-weight: 200
+          padding: .5rem 0
+          //&.tv-series-running-info
+          //font-weight: 100
+          font-size: 1.1rem
+          border-bottom: $border
 
+        .tv-series-up-next
 
-
-
-        @media all and (max-width: 1000px)
-          .tv-series-artwork-info
-            display: flex
-            flex-flow: column nowrap
-            .tv-series-artwork
-              width: 100%
-              .image
-                &.vertical
-                  display: none
-
-                &.horizontal
-                  width: 100%
-                  margin: 0
-
-
-
-
-            .tv-series-info
-              padding: 3rem
-
-
-
-
-        .tv-series-seasons
-          padding: 3rem
-
-
-
-
-      .tv-series-info
-        .tv-series-cast
-          .cast-title
+        .tv-series-overview
+          border-bottom: $border
+          .tv-series-overview-title
             padding-bottom: .5rem
             border-bottom: $border
-
-          .tv-series-cast-members
-            display: flex
-            width: 100%
-            overflow: auto
-
-
-
-        .tv-series-quick-info
-          padding: 1rem .25rem .25rem .25rem
-          .tv-series-running-info, .tv-series-season-count
-            font-weight: 200
-            padding: .5rem 0
-            font-size: 1.1rem
-            border-bottom: $border
-
-
-          .tv-series-up-next
-
-
-          .tv-series-overview
-            border-bottom: $border
-            .tv-series-overview-title
-              padding-bottom: .5rem
-              border-bottom: $border
-
-            .tv-series-overview-content
-              padding: 1rem 0
-
-
-
-
-
-
-
-
-
+          .tv-series-overview-content
+            padding: 1rem 0

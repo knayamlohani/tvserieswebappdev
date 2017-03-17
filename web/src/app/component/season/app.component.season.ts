@@ -7,10 +7,12 @@ import {Season} from "../../model/app.model.season";
 import {LoggerService} from "../../service/app.service.logger";
 import {Episode} from "../../model/app.model.episode";
 
+// css imports
+import './app.component.season.sass'
+
 @Component({
   selector   : 'season-component',
   templateUrl: './app.component.season.html',
-  styleUrls  : ['./app.component.season.sass']
 })
 export class SeasonComponent extends OnInit {
   @Input("seriesSeason") season: Season;

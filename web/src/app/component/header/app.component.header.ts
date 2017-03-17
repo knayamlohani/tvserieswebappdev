@@ -3,10 +3,12 @@
  */
 import {Component, OnInit} from "@angular/core";
 
+// css imports
+import './app.component.header.sass'
+
 @Component({
   selector   : 'app-header-component',
   templateUrl: './app.component.header.html',
-  styleUrls  : ['./app.component.header.sass']
 })
 export class AppHeaderComponent extends OnInit {
 

@@ -12,10 +12,12 @@ import {Location} from  "@angular/common"
 import {CastMember} from "../../model/app.model.cast_member";
 import {TV_SERIES_RUNNING_STATUS} from '../../constant/app.constant.tv_series_constants'
 
+// css imports
+import './app.component.tv_series.sass'
+
 @Component({
   selector   : 'tv-series',
   templateUrl: './app.component.tv_series.html',
-  styleUrls  : ['./app.component.tv_series.sass']
 })
 export class TVSeriesComponent extends OnInit{
   tvSeries: TVSeries;

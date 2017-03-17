@@ -11,11 +11,13 @@ import {Router} from "@angular/router";
 import {DataService} from "../../service/app.service.data";
 import {Location} from "@angular/common";
 
+// css imports
+import './app.component.search.sass'
+
 @Component({
   // moduleId: module.id,
   selector   : 'search-component',
   templateUrl: './app.component.search.html',
-  styleUrls  : ['./app.component.search.sass']
 })
 export class SearchComponent extends OnInit{
   name: string = "";

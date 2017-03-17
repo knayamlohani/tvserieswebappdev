@@ -39,6 +39,7 @@ app.use require('node-sass-middleware')({
   sourceMap: true
 })
 app.use express.static(path.join(__dirname, '/../../web/build/static'))
+app.use express.static(path.join(__dirname, '/../../web/build/assets'))
 app.use express.static(path.join(__dirname, '/../../node_modules'))
 
 #route mounts

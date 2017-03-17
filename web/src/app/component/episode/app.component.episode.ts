@@ -9,10 +9,13 @@ import {SeasonService} from "../../service/app.service.season";
 import {Subject, Subscription} from "rxjs";
 import {DATE_CONSTANTS} from "../../constant/app.constant.date_constants";
 
+// css imports
+import './app.component.episode.sass'
+
+
 @Component({
   selector   : 'episode-component',
   templateUrl: './app.component.episode.html',
-  styleUrls  : ['./app.component.episode.sass']
 })
 export class EpisodeComponent extends OnInit implements OnDestroy{
   @Input("seasonEpisode") episode: Episode;
