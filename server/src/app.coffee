@@ -6,6 +6,7 @@ logger        = require 'morgan'
 cookieParser  = require 'cookie-parser'
 bodyParser    = require 'body-parser'
 hbs           = require 'hbs'
+compression   = require 'compression'
 
 
 # route imports
@@ -28,6 +29,10 @@ app.engine 'html', hbs.__express
 # app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 # middlewares
+
+app.use compression options =
+  threshold: 0
+
 app.use logger('dev')
 app.use bodyParser.json()
 app.use bodyParser.urlencoded({ extended: false })

@@ -38,23 +38,9 @@ module.exports = {
       },
       {
         test   : /\.sass$/,
-        // include: helpers.root('src', 'app'),
-        // loaders: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'sass-loader?sourceMap' })
         exclude: /node_modules/,
-        // loaders: ['raw-loader', 'sass-loader']
         loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader' ])
       }
-      // ,
-      // {
-      //   test: /\.css$/,
-      //   exclude: helpers.root('src', 'app'),
-      //   loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader?sourceMap' })
-      // },
-      // {
-      //   test: /\.css$/,
-      //   include: helpers.root('src', 'app'),
-      //   loader: 'raw-loader'
-      // }
     ]
   },
 
@@ -69,6 +55,11 @@ module.exports = {
 
     new webpack.optimize.CommonsChunkPlugin({
       name: ['app', 'vendor', 'polyfills']
+    }),
+
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true,
+      compress: { warnings: false }
     }),
 
     new ExtractTextPlugin({ // define where to save the file
