@@ -2,6 +2,12 @@
   padding: 0;
   margin: 0;
   border: none; }
+  *::-webkit-input-placeholder {
+    color: white; }
+  *::-moz-placeholder {
+    color: white; }
+  *:-ms-input-placeholder {
+    color: white; }
   *::placeholder {
     color: white; }
 
@@ -49,10 +55,12 @@ a {
   left: 0;
   width: 110%;
   height: 110%;
-  filter: blur(10px);
+  -webkit-filter: blur(10px);
+          filter: blur(10px);
   background: url("/images/background_wall.jpg") no-repeat fixed;
   background-size: cover;
-  transform: scale(2); }
+  -webkit-transform: scale(2);
+          transform: scale(2); }
 
 .sub-title {
   font-size: 1.5rem; }
@@ -63,8 +71,11 @@ a {
   position: relative; }
 
 .search-component-body .search-tv-series-form {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-around;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
   padding: 0;
   margin: 0;
   position: relative; }
@@ -79,6 +90,12 @@ a {
     font-weight: 200;
     text-align: center;
     outline: none; }
+    .search-component-body .search-tv-series-form .search-input::-webkit-input-placeholder {
+      color: white; }
+    .search-component-body .search-tv-series-form .search-input::-moz-placeholder {
+      color: white; }
+    .search-component-body .search-tv-series-form .search-input:-ms-input-placeholder {
+      color: white; }
     .search-component-body .search-tv-series-form .search-input::placeholder {
       color: white; }
   .search-component-body .search-tv-series-form .search-tv-series-option {
@@ -118,9 +135,15 @@ a {
   position: relative;
   z-index: 5; }
   .search-component-body .tv-shows-wrapper .tv-shows {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-flow: row wrap;
-    justify-content: space-around; }
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
+    -ms-flex-pack: distribute;
+        justify-content: space-around; }
     .search-component-body .tv-shows-wrapper .tv-shows .tv-show {
       width: 15rem;
       height: 22rem;
@@ -157,10 +180,16 @@ a {
   top: 0;
   left: 0;
   z-index: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-flow: column nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
   font-size: 2rem;
-  justify-content: space-around;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
   text-align: center; }
   .search-component-body .searching-tv-show.hidden {
     display: none; }
@@ -178,18 +207,24 @@ a {
   left: 0;
   width: 110%;
   height: 110%;
-  filter: blur(10px);
+  -webkit-filter: blur(10px);
+          filter: blur(10px);
   background: url("/images/background_wall.jpg") no-repeat fixed;
   background-size: cover;
-  transform: scale(2); }
+  -webkit-transform: scale(2);
+          transform: scale(2); }
 .app-header-component-body {
   padding: .75rem 1rem;
   color: white;
   font-size: 1.75rem;
   background-color: rgba(0, 0, 0, 0.75);
   font-weight: 200;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between; }
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between; }
   .app-header-component-body .app-info .app-name .link {
     color: white; }
   .app-header-component-body .search-tv-series-delegate {
@@ -201,6 +236,12 @@ a {
     background-color: rgba(255, 255, 255, 0.25);
     text-align: center;
     font-weight: 100; }
+    .app-header-component-body .search-tv-series-delegate::-webkit-input-placeholder {
+      color: white; }
+    .app-header-component-body .search-tv-series-delegate::-moz-placeholder {
+      color: white; }
+    .app-header-component-body .search-tv-series-delegate:-ms-input-placeholder {
+      color: white; }
     .app-header-component-body .search-tv-series-delegate::placeholder {
       color: white; }
 .tv-series-component-body {
@@ -222,6 +263,8 @@ a {
       border-bottom: 0.1rem solid rgba(255, 255, 255, 0.2);
       font-size: 1.5rem;
       z-index: 100;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex; }
       .tv-series-component-body .wrapper .tv-series-name-options .tv-series-option {
         font-size: 1.25rem;
@@ -242,6 +285,8 @@ a {
       background-color: rgba(0, 0, 0, 0.35); }
       @media all and (min-width: 1001px) {
         .tv-series-component-body .wrapper .tv-series-artwork-info-seasons .tv-series-artwork-info {
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex; }
           .tv-series-component-body .wrapper .tv-series-artwork-info-seasons .tv-series-artwork-info .tv-series-artwork {
             width: 50%; }
@@ -257,8 +302,13 @@ a {
             padding: 3rem; } }
       @media all and (max-width: 1000px) {
         .tv-series-component-body .wrapper .tv-series-artwork-info-seasons .tv-series-artwork-info {
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          flex-flow: column nowrap; }
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+              -ms-flex-flow: column nowrap;
+                  flex-flow: column nowrap; }
           .tv-series-component-body .wrapper .tv-series-artwork-info-seasons .tv-series-artwork-info .tv-series-artwork {
             width: 100%; }
             .tv-series-component-body .wrapper .tv-series-artwork-info-seasons .tv-series-artwork-info .tv-series-artwork .image.vertical {
@@ -274,6 +324,8 @@ a {
       padding-bottom: .5rem;
       border-bottom: 0.1rem solid rgba(255, 255, 255, 0.2); }
     .tv-series-component-body .wrapper .tv-series-info .tv-series-cast .tv-series-cast-members {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
       width: 100%;
       overflow: auto; }
@@ -298,8 +350,13 @@ a {
     margin-bottom: 1rem;
     border-bottom: 0.1rem solid rgba(255, 255, 255, 0.2); }
   .season-component-body .episodes {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-flow: row wrap; }
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: row wrap;
+            flex-flow: row wrap; }
     .season-component-body .episodes .first-half-episodes, .season-component-body .episodes .second-half-episodes {
       width: 50%; }
     @media all and (max-width: 1000px) {
@@ -309,9 +366,16 @@ a {
   margin: .1rem;
   margin-left: 0; }
   .episode-component-body .episode-title-air-date {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
     border-radius: .25rem;
     padding: .25rem 1rem; }
     .episode-component-body .episode-title-air-date:hover {
@@ -319,8 +383,13 @@ a {
     .episode-component-body .episode-title-air-date.active {
       background-color: rgba(255, 255, 255, 0.2); }
     .episode-component-body .episode-title-air-date .episode-title {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-flow: row nowrap; }
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+          -ms-flex-flow: row nowrap;
+              flex-flow: row nowrap; }
       .episode-component-body .episode-title-air-date .episode-title .episode-no {
         text-align: right;
         width: 1.4rem; }

@@ -30,16 +30,37 @@ module.exports = {
       },
       {
         test: /\.html$/,
-        loader: 'html-loader'
+        use: ['html-loader']
       },
       {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
-        loader: 'file-loader?name=web/src/assets/[name].[ext]'
+        use : ['file-loader?name=web/src/assets/[name].[ext]']
       },
       {
         test   : /\.sass$/,
-        exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader' ])
+        use : ExtractTextPlugin.extract({
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                importLoaders: 1
+              }
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                plugins: function () {
+                  return [
+                    require('autoprefixer')
+                  ];
+                }
+              }
+            },
+            {
+              loader: 'sass-loader'
+            }
+          ]
+        })
       }
     ]
   },
