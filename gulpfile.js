@@ -165,6 +165,6 @@ gulp.task('startup:web', [
 
 
 
-gulp.task('startup', ['startup:web', 'startup:server', 'monitor']);
+gulp.task('startup', [/*'startup:web', */'startup:server', 'monitor']);
 gulp.task('dev',     ['startup']);
 gulp.task('default', ['dev']);
