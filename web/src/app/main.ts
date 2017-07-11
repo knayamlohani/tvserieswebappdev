@@ -9,3 +9,16 @@ import { enableProdMode } from "@angular/core";
 
 enableProdMode();
 platformBrowserDynamic().bootstrapModule(AppModule);
+
+
+
+if( 'serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+        .then((successResponse) => {
+            console.log("service worker registered")
+        })
+        .catch((errorResponse) => {
+            console.log("unable to register service worker")
+        }
+    )
+}
