@@ -4,8 +4,6 @@
   border: none; }
   *::-webkit-input-placeholder {
     color: white; }
-  *::-moz-placeholder {
-    color: white; }
   *:-ms-input-placeholder {
     color: white; }
   *::placeholder {
@@ -91,8 +89,6 @@ a {
     text-align: center;
     outline: none; }
     .search-component-body .search-tv-series-form .search-input::-webkit-input-placeholder {
-      color: white; }
-    .search-component-body .search-tv-series-form .search-input::-moz-placeholder {
       color: white; }
     .search-component-body .search-tv-series-form .search-input:-ms-input-placeholder {
       color: white; }
@@ -237,8 +233,6 @@ a {
     text-align: center;
     font-weight: 100; }
     .app-header-component-body .search-tv-series-delegate::-webkit-input-placeholder {
-      color: white; }
-    .app-header-component-body .search-tv-series-delegate::-moz-placeholder {
       color: white; }
     .app-header-component-body .search-tv-series-delegate:-ms-input-placeholder {
       color: white; }
